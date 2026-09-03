@@ -1,44 +1,9 @@
 import os
-
-# Set variabel lingkungan sebelum mengimpor tf_keras
-os.environ["TF_USE_LEGACY_KERAS"] = "1"
-
 import joblib
+import keras
 import numpy as np
 from PIL import Image
 import streamlit as st
-import tf_keras as keras
-
-
-# ------------------------------------------------------------------------
-# PATCH KOMPATIBILITAS KERAS 3 METADATA (.h5) KE TF_KERAS (KERAS 2)
-# ------------------------------------------------------------------------
-class PatchedInputLayer(keras.layers.InputLayer):
-    """Mengubah kunci 'batch_shape' dari Keras 3 menjadi 'batch_input_shape'."""
-
-    def __init__(self, *args, **kwargs):
-        if "batch_shape" in kwargs:
-            kwargs["batch_input_shape"] = kwargs.pop("batch_shape")
-        super().__init__(*args, **kwargs)
-
-
-class DTypePolicy(keras.mixed_precision.Policy):
-    """Menerjemahkan DTypePolicy dari Keras 3 agar dapat dibaca oleh tf_keras."""
-
-    def __init__(self, name="float32", **kwargs):
-        if isinstance(name, dict):
-            name = name.get("name", "float32")
-        super().__init__(str(name))
-
-    @classmethod
-    def from_config(cls, config):
-        name = (
-            config.get("name", "float32")
-            if isinstance(config, dict)
-            else config
-        )
-        return cls(name)
-
 
 # Path File Model di folder 'models/'
 RESNET_PATH = "models/best_resnet50_finetuned_model.h5"
@@ -96,23 +61,13 @@ DISEASE_CLASSES = {
 @st.cache_resource
 def load_all_models():
     """Memuat InceptionV3, ResNet50, dan Meta-Learner ke memori."""
-    # Mendaftarkan seluruh patch kompatibilitas Keras 3 -> Keras 2
-    custom_objs = {
-        "InputLayer": PatchedInputLayer,
-        "DTypePolicy": DTypePolicy,
-    }
-
     inc_model = (
-        keras.models.load_model(
-            INCEPTION_PATH, compile=False, custom_objects=custom_objs
-        )
+        keras.models.load_model(INCEPTION_PATH, compile=False, safe_mode=False)
         if os.path.exists(INCEPTION_PATH)
         else None
     )
     res_model = (
-        keras.models.load_model(
-            RESNET_PATH, compile=False, custom_objects=custom_objs
-        )
+        keras.models.load_model(RESNET_PATH, compile=False, safe_mode=False)
         if os.path.exists(RESNET_PATH)
         else None
     )
