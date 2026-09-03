@@ -1,0 +1,6 @@
+streamlit>=1.36
+tensorflow
+tf-keras
+h5py
+pillow
+numpy
