@@ -4,3 +4,4 @@ tf-keras
 h5py
 pillow
 numpy
+joblib
