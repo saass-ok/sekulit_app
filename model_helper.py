@@ -1,6 +1,8 @@
 import os
 import joblib
-import keras
+import os
+os.environ["TF_USE_LEGACY_KERAS"] = "1"
+import tf_keras as keras
 import numpy as np
 from PIL import Image
 import streamlit as st
