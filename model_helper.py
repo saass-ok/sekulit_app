@@ -1,11 +1,26 @@
 import os
-import joblib
-import os
+
+# Set variabel lingkungan sebelum mengimpor tf_keras
 os.environ["TF_USE_LEGACY_KERAS"] = "1"
-import tf_keras as keras
+
+import joblib
 import numpy as np
 from PIL import Image
 import streamlit as st
+import tf_keras as keras
+
+
+# ------------------------------------------------------------------------
+# PATCH UNTUK KOMPATIBILITAS KERAS 3 METADATA (.h5) KE TF_KERAS (KERAS 2)
+# ------------------------------------------------------------------------
+class PatchedInputLayer(keras.layers.InputLayer):
+    """Mengubah kunci 'batch_shape' dari Keras 3 menjadi 'batch_input_shape' agar terbaca di tf_keras."""
+
+    def __init__(self, *args, **kwargs):
+        if "batch_shape" in kwargs:
+            kwargs["batch_input_shape"] = kwargs.pop("batch_shape")
+        super().__init__(*args, **kwargs)
+
 
 # Path File Model di folder 'models/'
 RESNET_PATH = "models/best_resnet50_finetuned_model.h5"
@@ -42,7 +57,7 @@ DISEASE_CLASSES = {
     4: {
         "label": "Melanoma (MEL)",
         "description": (
-            "Jenis kanker kulit serius dari sel pigmen yang membutuhkan"
+            "Jenis kanker kulit serious dari sel pigmen yang membutuhkan"
             " penanganan cepat."
         ),
     },
@@ -63,13 +78,19 @@ DISEASE_CLASSES = {
 @st.cache_resource
 def load_all_models():
     """Memuat InceptionV3, ResNet50, dan Meta-Learner ke memori."""
+    custom_objs = {"InputLayer": PatchedInputLayer}
+
     inc_model = (
-        keras.models.load_model(INCEPTION_PATH, compile=False, safe_mode=False)
+        keras.models.load_model(
+            INCEPTION_PATH, compile=False, custom_objects=custom_objs
+        )
         if os.path.exists(INCEPTION_PATH)
         else None
     )
     res_model = (
-        keras.models.load_model(RESNET_PATH, compile=False, safe_mode=False)
+        keras.models.load_model(
+            RESNET_PATH, compile=False, custom_objects=custom_objs
+        )
         if os.path.exists(RESNET_PATH)
         else None
     )
