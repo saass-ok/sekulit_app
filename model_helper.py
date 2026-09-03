@@ -11,15 +11,33 @@ import tf_keras as keras
 
 
 # ------------------------------------------------------------------------
-# PATCH UNTUK KOMPATIBILITAS KERAS 3 METADATA (.h5) KE TF_KERAS (KERAS 2)
+# PATCH KOMPATIBILITAS KERAS 3 METADATA (.h5) KE TF_KERAS (KERAS 2)
 # ------------------------------------------------------------------------
 class PatchedInputLayer(keras.layers.InputLayer):
-    """Mengubah kunci 'batch_shape' dari Keras 3 menjadi 'batch_input_shape' agar terbaca di tf_keras."""
+    """Mengubah kunci 'batch_shape' dari Keras 3 menjadi 'batch_input_shape'."""
 
     def __init__(self, *args, **kwargs):
         if "batch_shape" in kwargs:
             kwargs["batch_input_shape"] = kwargs.pop("batch_shape")
         super().__init__(*args, **kwargs)
+
+
+class DTypePolicy(keras.mixed_precision.Policy):
+    """Menerjemahkan DTypePolicy dari Keras 3 agar dapat dibaca oleh tf_keras."""
+
+    def __init__(self, name="float32", **kwargs):
+        if isinstance(name, dict):
+            name = name.get("name", "float32")
+        super().__init__(str(name))
+
+    @classmethod
+    def from_config(cls, config):
+        name = (
+            config.get("name", "float32")
+            if isinstance(config, dict)
+            else config
+        )
+        return cls(name)
 
 
 # Path File Model di folder 'models/'
@@ -57,7 +75,7 @@ DISEASE_CLASSES = {
     4: {
         "label": "Melanoma (MEL)",
         "description": (
-            "Jenis kanker kulit serious dari sel pigmen yang membutuhkan"
+            "Jenis kanker kulit serius dari sel pigmen yang membutuhkan"
             " penanganan cepat."
         ),
     },
@@ -78,7 +96,11 @@ DISEASE_CLASSES = {
 @st.cache_resource
 def load_all_models():
     """Memuat InceptionV3, ResNet50, dan Meta-Learner ke memori."""
-    custom_objs = {"InputLayer": PatchedInputLayer}
+    # Mendaftarkan seluruh patch kompatibilitas Keras 3 -> Keras 2
+    custom_objs = {
+        "InputLayer": PatchedInputLayer,
+        "DTypePolicy": DTypePolicy,
+    }
 
     inc_model = (
         keras.models.load_model(
