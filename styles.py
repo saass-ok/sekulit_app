@@ -1,4 +1,4 @@
-"""Injeksi CSS Global - SEKULIT Precision Mobile Styling & Material Icons Fix"""
+"""Injeksi CSS Global - SEKULIT Responsive Header Title Fix"""
 
 import config as c
 import streamlit as st
@@ -22,7 +22,7 @@ def inject_css():
             overflow-x: hidden !important;
         }}
 
-        /* FIX PENTING: Kembalikan Font Khusus Ikon Material Streamlit */
+        /* Font Ikon Material Streamlit */
         [data-testid="stIconMaterial"],
         span[data-testid="stIconMaterial"],
         .material-symbols-outlined {{
@@ -61,7 +61,7 @@ def inject_css():
             flex-direction: row !important;
             flex-wrap: nowrap !important;
             width: 100% !important;
-            gap: 6px !important;
+            gap: 4px !important;
             align-items: center !important;
         }}
 
@@ -142,17 +142,17 @@ def inject_css():
             }}
         }}
 
-        /* 4. HEADER TITLE */
+        /* 4. FIX HEADER TITLE (Anti Terpotong) */
         .sekulit-header-title {{
-            font-size: 15px !important;
+            font-size: clamp(12px, 3.8vw, 14.5px) !important; /* Otomatis mengecil jika layar HP sangat sempit */
             font-weight: 700 !important;
             color: #4a3525 !important;
             text-align: center !important;
             white-space: nowrap !important;
-            overflow: hidden !important;
-            text-overflow: ellipsis !important;
             line-height: 32px !important;
             margin: 0 !important;
+            padding: 0 !important;
+            letter-spacing: -0.3px !important;
         }}
 
         /* 5. STYLE TOMBOL NAVIGASI BAWAH */
