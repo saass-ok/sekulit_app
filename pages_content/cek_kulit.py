@@ -136,3 +136,36 @@ def render_input():
             # Jika Valid, Simpan dan Pindah Halaman
             st.session_state.estimation_result = estimation_result
             go_to("cek_kulit_output")
+
+
+def render_output():
+    """Halaman Hasil Deteksi / Estimasi Lesi Kulit"""
+    result = st.session_state.get("estimation_result")
+
+    # Jika data tidak ada (misal di-refresh), kembali ke input
+    if not result:
+        go_to("cek_kulit_input")
+        return
+
+    st.markdown(
+        '<p class="sekulit-subheading" style="font-weight:700; margin-bottom: 12px; color:#4a3525;">Hasil Estimasi Lesi Kulit</p>',
+        unsafe_allow_html=True,
+    )
+
+    # Menampilkan detail kartu hasil
+    with st.container(border=True):
+        label = result.get("label", "Tidak Diketahui")
+        confidence = result.get("confidence", 0.0)
+        uncertainty = result.get("uncertainty", 0.0)
+        description = result.get("description", "Tidak ada deskripsi tersedia.")
+
+        st.markdown(f"### {label}")
+        st.markdown(f"**Tingkat Keyakinan:** {confidence:.1f}%")
+        st.markdown(f"**Tingkat Ketidakpastian:** {uncertainty:.1f}%")
+        st.write("---")
+        st.markdown(f"**Deskripsi:**\n{description}")
+
+    st.write("")
+    if st.button("Ulangi / Cek Foto Lain", key="btn_back_to_input", use_container_width=True):
+        st.session_state.estimation_result = None
+        go_to("cek_kulit_input")
