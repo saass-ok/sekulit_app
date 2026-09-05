@@ -201,7 +201,7 @@ def inject_css():
             margin: 0 auto !important;
         }}
 
-        /* 7. FIX TOMBOL CLOSE (X) & KOTAK CONTAINER INFORMASI */
+        /* 7. FIX TOMBOL CLOSE (X) & MARGIN CONTAINER */
         button[key*="close_detail"] {{
             min-height: 28px !important;
             height: 28px !important;
@@ -215,6 +215,7 @@ def inject_css():
             font-size: 13px !important;
             font-weight: bold !important;
             border: none !important;
+            float: right !important;
             margin-left: auto !important;
             display: flex !important;
             align-items: center !important;
@@ -228,6 +229,7 @@ def inject_css():
         [data-testid="stElementContainer"]:has(button[key*="close_detail"]) {{
             display: flex !important;
             justify-content: flex-end !important;
+            width: 100% !important;
         }}
 
         /* Custom Margin Kotak Detail */
