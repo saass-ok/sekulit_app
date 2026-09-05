@@ -1,177 +1,248 @@
-import os
+"""Injeksi CSS Global - SEKULIT Responsive Header Title & Popup Fix"""
+
+import config as c
 import streamlit as st
 
-# ===================== DATA 7 PENYAKIT (TANPA EMOJI) =====================
-DISEASES = [
-    {
-        "id": "melanocytic_nevi",
-        "name": "Melanocytic Nevi",
-        "image_url": "assets/Melanocytic Nevi.jpg",
-        "description": "Melanocytic Nevi adalah pertumbuhan jinak pada kulit yang terbentuk dari penumpukan sel pigmen (melanosit), atau yang secara umum dikenal masyarakat sebagai tahi lalat biasa.",
-        "obat": "Kondisi ini tidak dapat disembuhkan atau dihilangkan menggunakan obat minum maupun salep topikal. Sangat dilarang menggunakan cairan atau krim penghilang tahi lalat yang dijual bebas di pasaran, karena berisiko tinggi memicu luka bakar kimia, infeksi, hingga kerusakan jaringan kulit permanen.",
-        "penanganan": "Jika tahi lalat terasa mengganggu secara estetika atau sering mengalami iritasi akibat gesekan, penanganan terbaik adalah melakukan tindakan medis aman (seperti laser atau bedah minor) oleh dokter spesialis kulit. Untuk perawatan mandiri, cukup gunakan tabir surya (sunscreen) secara rutin guna melindungi tahi lalat dari paparan radiasi UV.",
-    },
-    {
-        "id": "basal_cell_carcinoma",
-        "name": "Basal Cell Carcinoma",
-        "image_url": "assets/Basal Cell Carcinoma.jpg",
-        "description": "Basal Cell Carcinoma (BCC) adalah jenis kanker kulit paling umum yang tumbuh lambat dan jarang menyebar ke bagian tubuh lain. Biasanya muncul sebagai benjolan berkilau atau luka yang tidak sembuh-sembuh.",
-        "obat": "Pengobatan BCC umumnya melalui tindakan bedah eksisi, krioterapi, atau terapi topikal seperti imiquimod atau fluorouracil untuk kasus superfisial. Konsultasi dengan dokter spesialis kulit sangat dianjurkan.",
-        "penanganan": "Deteksi dini sangat penting. Jika menemukan luka yang tidak sembuh dalam 4 minggu, segera periksakan ke dokter. Gunakan sunscreen setiap hari untuk mencegah kekambuhan.",
-    },
-    {
-        "id": "melanoma",
-        "name": "Melanoma",
-        "image_url": "assets/Melanoma.jpg",
-        "description": "Melanoma adalah jenis kanker kulit paling serius yang berasal dari sel pigmen (melanosit). Dapat muncul dari tahi lalat yang berubah bentuk, warna, atau ukuran, atau muncul sebagai bintik baru.",
-        "obat": "Pengobatan melanoma memerlukan tindakan bedah eksisi luas, imunoterapi, terapi target, atau kemoterapi tergantung stadium. Penanganan harus segera dilakukan oleh ahli onkologi kulit.",
-        "penanganan": "Perhatikan tanda ABCDE: Asimetri, Batas tidak rata, Warna tidak merata, Diameter >6mm, Evolusi (berubah). Segera periksa ke dokter jika ada perubahan.",
-    },
-    {
-        "id": "actinic_keratoses",
-        "name": "Actinic Keratoses",
-        "image_url": "assets/Actinic Keratoses.jpg",
-        "description": "Actinic Keratoses (AK) adalah bercak bersisik pada kulit akibat paparan sinar matahari jangka panjang. Merupakan lesi pra-kanker yang dapat berkembang menjadi squamous cell carcinoma jika tidak ditangani.",
-        "obat": "Pengobatan AK meliputi krioterapi, terapi topikal (5-fluorouracil, imiquimod, atau diclofenac), dan fotodinamik terapi. Konsultasi dokter untuk penanganan terbaik.",
-        "penanganan": "Lindungi kulit dari sinar matahari dengan sunscreen SPF 30+, gunakan pakaian pelindung, dan hindari paparan sinar UV berlebihan. Lakukan pemeriksaan kulit rutin.",
-    },
-    {
-        "id": "benign_keratosis",
-        "name": "Benign Keratosis",
-        "image_url": "assets/Benign Keratosis-like Lesions.jpg",
-        "description": "Benign Keratosis (BKL) adalah pertumbuhan kulit jinak yang umum terjadi seiring bertambahnya usia. Biasanya muncul sebagai bercak cokelat atau hitam dengan permukaan kasar seperti kutil.",
-        "obat": "BKL tidak memerlukan pengobatan khusus karena bersifat jinak. Namun jika mengganggu secara estetika atau sering iritasi, dapat dilakukan krioterapi atau eksisi minor oleh dokter.",
-        "penanganan": "Cukup lakukan observasi rutin. Gunakan pelembab untuk menjaga kulit tetap lembab dan hindari menggaruk atau mengiritasi lesi.",
-    },
-    {
-        "id": "vascular_lesions",
-        "name": "Vascular Lesions",
-        "image_url": "assets/Vascular Lesions.jpg",
-        "description": "Vascular Lesions (VASC) adalah gangguan pembuluh darah di kulit yang tampak sebagai bercak merah, ungu, atau kemerahan. Contohnya adalah hemangioma, port-wine stain, atau spider angioma. Umumnya bersifat jinak.",
-        "obat": "Pengobatan vascular lesions tergantung jenisnya. Laser pulsed dye laser (PDL) adalah terapi utama untuk lesi vaskular. Krim topikal seperti timolol dapat digunakan untuk hemangioma infantile.",
-        "penanganan": "Konsultasi dengan dokter kulit untuk diagnosis dan terapi yang tepat. Lindungi kulit dari trauma untuk mencegah perdarahan.",
-    },
-    {
-        "id": "dermatofibroma",
-        "name": "Dermatofibroma",
-        "image_url": "assets/Dermatofibroma.jpg",
-        "description": "Dermatofibroma (DF) adalah benjolan jinak di bawah kulit yang keras dan berwarna cokelat. Sering muncul di tungkai bawah dan biasanya tidak menimbulkan gejala, meskipun kadang terasa gatal atau nyeri.",
-        "obat": "DF tidak memerlukan pengobatan karena bersifat jinak. Jika menimbulkan gejala atau mengganggu, dapat dilakukan eksisi bedah minor oleh dokter kulit.",
-        "penanganan": "Hindari menggaruk atau menekan benjolan. Jika ukuran atau warna berubah, segera periksakan ke dokter untuk memastikan tidak ada keganasan.",
-    },
-]
 
-
-def render():
-    """Halaman rekomendasi obat – detail kartu rapi, presisi & proporsional."""
-
-    selected_id = st.session_state.get("selected_disease")
-    if selected_id:
-        selected = next((d for d in DISEASES if d["id"] == selected_id), None)
-        if selected:
-            # Space atas agar tidak mepet ke header
-            st.markdown("<div style='height: 8px;'></div>", unsafe_allow_html=True)
-
-            with st.container(border=True):
-                # 1 & 2. HEADER: Judul di Tengah (Center), Tombol X Presisi di Pojok Kanan
-                col_spacer, col_title, col_close = st.columns([1, 8, 1])
-                
-                with col_title:
-                    st.markdown(
-                        f'<h3 style="color:#4a3525; margin:0; font-size:16px; font-weight:700; text-align:center; line-height:28px;">{selected["name"]}</h3>',
-                        unsafe_allow_html=True,
-                    )
-                with col_close:
-                    if st.button("✕", key="close_detail", help="Tutup detail"):
-                        st.session_state.selected_disease = None
-                        st.rerun()
-
-                st.markdown(
-                    "<hr style='margin: 10px 0 14px 0; border: none; border-top: 1px solid #ecdfd4;'>",
-                    unsafe_allow_html=True,
-                )
-
-                # BARIS 1: Gambar (Kiri) & Deskripsi (Kanan)
-                col_img, col_desc = st.columns([1, 1])
-
-                with col_img:
-                    if os.path.exists(selected["image_url"]):
-                        st.image(selected["image_url"], use_container_width=True)
-                    else:
-                        st.markdown(
-                            '<div style="text-align:center; color:#8a7a6d; padding:20px 0;">[ Gambar ]</div>',
-                            unsafe_allow_html=True,
-                        )
-
-                with col_desc:
-                    st.markdown(
-                        '<h4 style="color:#4a3525; margin:0 0 4px 0; font-size:13px; font-weight:700;">Deskripsi</h4>',
-                        unsafe_allow_html=True,
-                    )
-                    st.markdown(
-                        f'<p style="color:#4a3525; opacity:0.9; margin:0; font-size:11.5px; line-height:1.35;">{selected["description"]}</p>',
-                        unsafe_allow_html=True,
-                    )
-
-                st.markdown("<div style='height: 12px;'></div>", unsafe_allow_html=True)
-
-                # BARIS 2: Rekomendasi Obat & Penanganan Tepat (Dibuat Sejajar Menggunakan Top Alignment)
-                col_obat, col_penanganan = st.columns([1, 1])
-
-                with col_obat:
-                    st.markdown(
-                        '<h4 style="color:#4a3525; margin:0 0 4px 0; font-size:13px; font-weight:700;">Rekomendasi Obat</h4>',
-                        unsafe_allow_html=True,
-                    )
-                    st.markdown(
-                        f'<p style="color:#4a3525; opacity:0.9; margin:0; font-size:11.5px; line-height:1.35;">{selected["obat"]}</p>',
-                        unsafe_allow_html=True,
-                    )
-
-                with col_penanganan:
-                    st.markdown(
-                        '<h4 style="color:#4a3525; margin:0 0 4px 0; font-size:13px; font-weight:700;">Penanganan Tepat</h4>',
-                        unsafe_allow_html=True,
-                    )
-                    st.markdown(
-                        f'<p style="color:#4a3525; opacity:0.9; margin:0; font-size:11.5px; line-height:1.35;">{selected["penanganan"]}</p>',
-                        unsafe_allow_html=True,
-                    )
-
-            # Space bawah agar tidak menabrak tombol navigasi
-            st.markdown("<div style='height: 30px;'></div>", unsafe_allow_html=True)
-            return
-
-    # ---- Grid 2 Kolom Utama (Katalog) ----
+def inject_css():
     st.markdown(
-        "<p style='text-align:center; color:#8a7a6d; margin-bottom:16px;'>Pilih penyakit untuk melihat rekomendasi</p>",
+        f"""
+        <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0');
+
+        /* 1. RESET GLOBAL & SCROLL LOCK */
+        *, html, body, .stApp {{
+            box-sizing: border-box !important;
+        }}
+
+        html, body, .stApp {{
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            max-width: 100vw !important;
+            overflow-x: hidden !important;
+        }}
+
+        /* Font Ikon Material Streamlit */
+        [data-testid="stIconMaterial"],
+        span[data-testid="stIconMaterial"],
+        .material-symbols-outlined {{
+            font-family: 'Material Symbols Outlined' !important;
+            font-weight: normal !important;
+            font-style: normal !important;
+            line-height: 1 !important;
+            text-transform: none !important;
+            letter-spacing: normal !important;
+            word-wrap: normal !important;
+            white-space: nowrap !important;
+            direction: ltr !important;
+        }}
+
+        /* Sembunyikan chrome bawaan Streamlit */
+        #MainMenu, footer, header, div[data-testid="stToolbar"], div[data-testid="stDecoration"] {{
+            display: none !important;
+            visibility: hidden !important;
+        }}
+
+        [data-testid="stAppViewContainer"],
+        [data-testid="stHeader"],
+        [data-testid="stVerticalBlock"],
+        [data-testid="stVerticalBlockBorderWrapper"],
+        .element-container {{
+            background-color: transparent !important;
+        }}
+
+        .stApp {{
+            background-color: #d6cfc7 !important;
+        }}
+
+        /* 2. PAKSA KOLOM TETAP SEJAJAR KESAMPING DI HP (TOP ALIGNED) */
+        div[data-testid="stHorizontalBlock"] {{
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: nowrap !important;
+            width: 100% !important;
+            gap: 6px !important;
+            align-items: flex-start !important; /* Agar judul kolom sejajar rata atas */
+        }}
+
+        div[data-testid="stHorizontalBlock"] > div[data-testid="column"],
+        div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"] {{
+            width: 0 !important;
+            min-width: 0 !important;
+            flex: 1 1 0% !important;
+            padding: 0 !important;
+        }}
+
+        /* 3. LAYOUT CONTAINER UTAMA */
+        @media (min-width: 600px) {{
+            .stApp {{
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh !important;
+            }}
+
+            div.block-container {{
+                max-width: {c.FRAME_WIDTH}px !important;
+                width: {c.FRAME_WIDTH}px !important;
+                height: {c.FRAME_HEIGHT}px !important;
+                max-height: {c.FRAME_HEIGHT}px !important;
+                margin: auto !important;
+                padding: 16px 14px 75px 14px !important;
+                background-color: {c.COLOR_BG} !important;
+                border-radius: 32px !important;
+                box-shadow: 0 20px 50px rgba(74, 53, 37, 0.25) !important;
+                overflow-y: auto !important;
+                overflow-x: hidden !important;
+                position: relative !important;
+            }}
+
+            div[data-testid="stHorizontalBlock"]:has(button[key*="nav_"]) {{
+                position: absolute !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                width: 100% !important;
+                background-color: #ffffff !important;
+                padding: 10px 12px 14px 12px !important;
+                border-top: 1px solid #ecdfd4 !important;
+                border-bottom-left-radius: 32px !important;
+                border-bottom-right-radius: 32px !important;
+                z-index: 99999 !important;
+            }}
+        }}
+
+        @media (max-width: 599px) {{
+            .stApp {{
+                background-color: {c.COLOR_BG} !important;
+            }}
+
+            div.block-container {{
+                max-width: 100% !important;
+                width: 100% !important;
+                height: 100vh !important;
+                margin: 0 !important;
+                padding: 16px 12px 85px 12px !important;
+                background-color: {c.COLOR_BG} !important;
+                border-radius: 0px !important;
+                overflow-y: auto !important;
+                overflow-x: hidden !important;
+            }}
+
+            div[data-testid="stHorizontalBlock"]:has(button[key*="nav_"]) {{
+                position: fixed !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                width: 100% !important;
+                background-color: #ffffff !important;
+                padding: 10px 12px 14px 12px !important;
+                border-top: 1px solid #ecdfd4 !important;
+                z-index: 99999 !important;
+            }}
+        }}
+
+        /* 4. FIX HEADER TITLE */
+        .sekulit-header-title {{
+            font-size: clamp(12px, 3.8vw, 14.5px) !important;
+            font-weight: 700 !important;
+            color: #4a3525 !important;
+            text-align: center !important;
+            white-space: nowrap !important;
+            line-height: 32px !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            letter-spacing: -0.3px !important;
+        }}
+
+        /* 5. STYLE TOMBOL NAVIGASI BAWAH */
+        button[key*="nav_"] {{
+            min-height: 42px !important;
+            height: 42px !important;
+            max-height: 42px !important;
+            padding: 0 !important;
+            border-radius: 12px !important;
+            margin: 0 !important;
+            width: 100% !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+        }}
+
+        button[key*="nav_"] [data-testid="stIconMaterial"] {{
+            font-size: 24px !important;
+            margin: 0 !important;
+        }}
+
+        /* 6. FILE UPLOADER FIX */
+        [data-testid="stFileUploader"] {{
+            background-color: #ffffff !important;
+            border-radius: 16px !important;
+            padding: 8px !important;
+            border: 1px dashed #d0c0b0 !important;
+        }}
+
+        [data-testid="stFileUploaderDropzone"] {{
+            background-color: transparent !important;
+            padding: 12px !important;
+        }}
+
+        [data-testid="stFileUploader"] button {{
+            width: auto !important;
+            min-height: 36px !important;
+            height: 36px !important;
+            padding: 4px 16px !important;
+            font-size: 13px !important;
+            font-weight: 600 !important;
+            border-radius: 8px !important;
+            background-color: #4a3525 !important;
+            color: #ffffff !important;
+            border: none !important;
+            margin: 0 auto !important;
+        }}
+
+        /* 7. FIX TOMBOL CLOSE (X) & KOTAK CONTAINER INFORMASI */
+        button[key*="close_detail"] {{
+            min-height: 28px !important;
+            height: 28px !important;
+            max-height: 28px !important;
+            width: 28px !important;
+            max-width: 28px !important;
+            padding: 0 !important;
+            background-color: #4a3525 !important;
+            color: #ffffff !important;
+            border-radius: 50% !important;
+            font-size: 13px !important;
+            font-weight: bold !important;
+            border: none !important;
+            margin-left: auto !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }}
+
+        button[key*="close_detail"] * {{
+            color: #ffffff !important;
+        }}
+
+        [data-testid="stElementContainer"]:has(button[key*="close_detail"]) {{
+            display: flex !important;
+            justify-content: flex-end !important;
+        }}
+
+        /* Custom Margin Kotak Detail */
+        [data-testid="stVerticalBlockBorderWrapper"] {{
+            padding: 12px 10px !important;
+            border-radius: 20px !important;
+            background-color: #ffffff !important;
+        }}
+
+        /* Hide Scrollbar */
+        div.block-container::-webkit-scrollbar {{
+            width: 0px;
+            display: none;
+        }}
+        </style>
+        """,
         unsafe_allow_html=True,
     )
-
-    cols = st.columns(2)
-    for idx, disease in enumerate(DISEASES):
-        col = cols[idx % 2]
-        with col:
-            if os.path.exists(disease["image_url"]):
-                st.image(disease["image_url"], use_container_width=True)
-            else:
-                st.markdown(
-                    '<div style="text-align:center; color:#8a7a6d; padding:20px 0;">[ Gambar ]</div>',
-                    unsafe_allow_html=True,
-                )
-
-            st.markdown(
-                f"<p style='color:#4a3525; font-weight:600; text-align:center; margin:4px 0 8px 0; font-size:13px;'>{disease['name']}</p>",
-                unsafe_allow_html=True,
-            )
-
-            if st.button(
-                "Pilih",
-                key=f"btn_{disease['id']}",
-                use_container_width=True,
-                type="secondary",
-            ):
-                st.session_state.selected_disease = disease["id"]
-                st.rerun()
-
-            st.markdown("<div style='margin-bottom:16px;'></div>", unsafe_allow_html=True)
