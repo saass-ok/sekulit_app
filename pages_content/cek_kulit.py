@@ -24,34 +24,6 @@ LOKASI_LESI_OPTIONS = {
 def render_input():
     """Halaman Deteksi Baru - Input Data dengan pilihan Kamera / Upload File"""
 
-    # ===== CSS Lokal untuk Penguncian Tema Terang pada Widget Input =====
-    st.markdown(
-        """
-        <style>
-        /* Paksa background form input agar tidak ikut menghitam di Dark Mode */
-        .stNumberInput div[data-baseweb="input"],
-        .stSelectbox div[data-baseweb="select"] > div {
-            background-color: #FFFFFF !important;
-            border: 1px solid #D0C0B0 !important;
-            border-radius: 12px !important;
-            color: #4A3525 !important;
-        }
-        
-        .stNumberInput input,
-        .stSelectbox div {
-            color: #4A3525 !important;
-        }
-
-        /* Styling Pilihan Metode Input (Radio Option) */
-        div[role="radiogroup"] label div p {
-            color: #4A3525 !important;
-            font-weight: 600 !important;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
-
     st.markdown(
         '<p class="sekulit-subheading" style="font-weight:700; margin-bottom: 12px; color:#4a3525;">Input Data Pengguna</p>',
         unsafe_allow_html=True,
@@ -139,9 +111,9 @@ def render_input():
         key="btn_proses_estimasi",
         use_container_width=True,
     ):
-        # Validasi 1: Gambar Kosong
+        # Validasi 1: Jika Pengguna Belum Memasukkan Gambar
         if image_source is None:
-            st.toast("Silakan unggah atau ambil foto lesi kulit terlebih dahulu!", icon="⚠️")
+            st.toast("⚠️ Harap unggah atau ambil foto terlebih dahulu!")
             return
 
         with st.spinner("Menganalisis gambar dan data pasien..."):
@@ -152,117 +124,15 @@ def render_input():
                 location=st.session_state.get("input_lokasi_lesi"),
             )
 
-            # Validasi 2: Cek Apakah Gambar Valid (Bukan gambar kulit)
-            if isinstance(estimation_result, dict) and not estimation_result.get("is_valid", True):
-                st.warning("⚠️ **Foto Tidak Valid!** Harap pastikan foto yang dimasukkan adalah gambar area lesi kulit yang jelas dan fokus.")
+            # Validasi 2: Jika Gambar Ditolak oleh AI (Bukan Kulit Bermasalah / Gambar Buram)
+            if not estimation_result.get("is_valid", False):
+                st.error(
+                    "⚠️ **Gambar Tidak Valid / Tidak Terdeteksi!**\n\n"
+                    "Sistem tidak mendeteksi area lesi/kelainan kulit pada foto ini. "
+                    "Harap unggah atau ambil foto baru yang lebih dekat, jelas, dan fokus pada area kulit bermasalah."
+                )
                 return
 
+            # Jika Valid, Simpan dan Pindah Halaman
             st.session_state.estimation_result = estimation_result
             go_to("cek_kulit_output")
-
-
-def render_output():
-    """Halaman Hasil Estimasi"""
-    result = st.session_state.get("estimation_result") or {
-        "label": "Vascular Lesions",
-        "description": "Vascular Lesions adalah kondisi terkait gangguan atau kelainan pada pembuluh darah di kulit, seperti tanda lahir merah atau pelebaran pembuluh darah yang umumnya bersifat jinak.",
-        "confidence": 85.21,
-        "uncertainty": 14.79,
-    }
-
-    # Card Judul Estimasi
-    st.markdown(
-        f"""
-        <div class="sekulit-card" style="text-align: center; padding: 18px 12px; border-radius: 16px;">
-            <h3 style="margin: 0; font-size: 20px; font-weight: 700; color: #4a3525;">{result["label"]}</h3>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    # Deskripsi Penyakit
-    st.markdown(
-        f"""
-        <p style="font-size: 11px; color: #4a3525; line-height: 1.4; text-align: justify; margin: 10px 0 14px 0;">
-            {result["description"]}
-        </p>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    # Bar Confidence Score
-    st.markdown(
-        '<p style="font-size: 12px; font-weight: 700; color: #4a3525; margin-bottom: 4px;">Confidence Score</p>',
-        unsafe_allow_html=True,
-    )
-    conf_val = result["confidence"]
-    st.markdown(
-        f"""
-        <div style="background-color: #e8ded5; border-radius: 12px; height: 32px; width: 100%; position: relative; overflow: hidden; margin-bottom: 12px;">
-            <div style="background-color: #f3a88c; width: {conf_val}%; height: 100%; border-radius: 12px; display: flex; align-items: center; padding-left: 12px;">
-                <span style="font-size: 12px; font-weight: 700; color: #4a3525;">{conf_val:.2f}%</span>
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    # Bar Uncertainty Level
-    st.markdown(
-        '<p style="font-size: 12px; font-weight: 700; color: #4a3525; margin-bottom: 4px;">Uncertainty Level</p>',
-        unsafe_allow_html=True,
-    )
-    uncert_val = result["uncertainty"]
-    st.markdown(
-        f"""
-        <div style="background-color: #e8ded5; border-radius: 12px; height: 32px; width: 100%; position: relative; overflow: hidden; margin-bottom: 14px;">
-            <div style="background-color: #f3a88c; width: {uncert_val}%; height: 100%; border-radius: 12px; display: flex; align-items: center; padding-left: 12px;">
-                <span style="font-size: 12px; font-weight: 700; color: #4a3525;">{uncert_val:.2f}%</span>
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    # Card Saran
-    st.markdown(
-        '<p style="font-size: 12px; font-weight: 700; color: #4a3525; margin-bottom: 6px;">Saran Berdasarkan Hasil Estimasi</p>',
-        unsafe_allow_html=True,
-    )
-    st.markdown(
-        """
-        <div class="sekulit-card" style="padding: 12px; border-radius: 16px; margin-bottom: 12px;">
-            <p style="font-size: 11px; color: #4a3525; margin: 0; line-height: 1.4;">
-                Hindari memanipulasi atau mengobati sendiri area kulit tersebut, dan konsultasikan ke dokter spesialis kulit guna mendapatkan pemeriksaan yang akurat.
-            </p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    # Box Peringatan Medis
-    st.markdown(
-        """
-        <div style="background-color: #fce8cc; border: 1px solid #f7d098; border-radius: 14px; padding: 10px 12px; display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
-            <span style="font-size: 20px;">⚠️</span>
-            <p style="font-size: 10px; color: #4a3525; margin: 0; line-height: 1.3;">
-                <b>Penting:</b> Hasil ini merupakan estimasi dini berbasis analisis machine learning dan bukan merupakan diagnosis medis mutlak.
-            </p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    # Tombol Aksi Bawah
-    col1, col2 = st.columns(2, gap="small")
-    with col1:
-        if st.button("Simpan Hasil", key="out_simpan", use_container_width=True):
-            st.toast("Hasil berhasil disimpan!")
-    with col2:
-        if st.button(
-            "Konsultasi Dokter",
-            type="primary",
-            key="out_ke_konsultasi",
-            use_container_width=True,
-        ):
-            go_to("konsultasi_list")
