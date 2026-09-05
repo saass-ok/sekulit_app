@@ -55,14 +55,14 @@ def inject_css():
             background-color: #d6cfc7 !important;
         }}
 
-        /* 2. PAKSA KOLOM TETAP SEJAJAR KESAMPING DI HP (TOP ALIGNED) */
+        /* 2. PAKSA KOLOM TETAP SEJAJAR KESAMPING DI HP */
         div[data-testid="stHorizontalBlock"] {{
             display: flex !important;
             flex-direction: row !important;
             flex-wrap: nowrap !important;
             width: 100% !important;
             gap: 6px !important;
-            align-items: flex-start !important; /* Agar judul kolom sejajar rata atas */
+            align-items: flex-start !important;
         }}
 
         div[data-testid="stHorizontalBlock"] > div[data-testid="column"],
@@ -201,8 +201,27 @@ def inject_css():
             margin: 0 auto !important;
         }}
 
-        /* 7. FIX TOMBOL CLOSE (X) & MARGIN CONTAINER */
+        /* 7. PAKSA KOTAK JADI RELATIVE & TOMBOL X DIPOSISIKAN ABSOLUT KE POJOK KANAN ATAS */
+        [data-testid="stVerticalBlockBorderWrapper"] {{
+            position: relative !important;
+            padding: 16px 14px !important;
+            border-radius: 24px !important;
+            background-color: #ffffff !important;
+        }}
+
+        [data-testid="stElementContainer"]:has(button[key*="close_detail"]) {{
+            position: absolute !important;
+            top: 12px !important;
+            right: 12px !important;
+            width: 28px !important;
+            height: 28px !important;
+            z-index: 9999 !important;
+        }}
+
         button[key*="close_detail"] {{
+            position: absolute !important;
+            top: 0 !important;
+            right: 0 !important;
             min-height: 28px !important;
             height: 28px !important;
             max-height: 28px !important;
@@ -215,28 +234,14 @@ def inject_css():
             font-size: 13px !important;
             font-weight: bold !important;
             border: none !important;
-            float: right !important;
-            margin-left: auto !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
+            cursor: pointer !important;
         }}
 
         button[key*="close_detail"] * {{
             color: #ffffff !important;
-        }}
-
-        [data-testid="stElementContainer"]:has(button[key*="close_detail"]) {{
-            display: flex !important;
-            justify-content: flex-end !important;
-            width: 100% !important;
-        }}
-
-        /* Custom Margin Kotak Detail */
-        [data-testid="stVerticalBlockBorderWrapper"] {{
-            padding: 12px 10px !important;
-            border-radius: 20px !important;
-            background-color: #ffffff !important;
         }}
 
         /* Hide Scrollbar */
