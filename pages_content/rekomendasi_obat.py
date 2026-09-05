@@ -63,26 +63,23 @@ DISEASES = [
 
 
 def render():
-    """Halaman rekomendasi obat – Detail kartu rapi & presisi."""
+    """Halaman rekomendasi obat – Tombol X nempel presisi di pojok kanan atas."""
 
     selected_id = st.session_state.get("selected_disease")
     if selected_id:
         selected = next((d for d in DISEASES if d["id"] == selected_id), None)
         if selected:
-            # Space atas
             st.markdown("<div style='height: 6px;'></div>", unsafe_allow_html=True)
 
             with st.container(border=True):
-                # 1. BARIS TOP: Tombol X Pojok Kanan
-                col_space, col_close = st.columns([8.5, 1.5])
-                with col_close:
-                    if st.button("✕", key="close_detail", help="Tutup detail"):
-                        st.session_state.selected_disease = None
-                        st.rerun()
+                # 1. TOMBOL CLOSE (Akan otomatis loncat ke pojok kanan atas kotak via CSS)
+                if st.button("✕", key="close_detail", help="Tutup detail"):
+                    st.session_state.selected_disease = None
+                    st.rerun()
 
-                # 2. BARIS JUDUL: Di bawah X, Full Width, Center (Anti-terpotong)
+                # 2. JUDUL PENYAKIT (Penuh 100% di tengah tanpa terpotong)
                 st.markdown(
-                    f'<h3 style="color:#4a3525; margin:-6px 0 10px 0; font-size:16px; font-weight:700; text-align:center; width:100%;">{selected["name"]}</h3>',
+                    f'<h3 style="color:#4a3525; margin: 4px 0 10px 0; font-size:16px; font-weight:700; text-align:center; width:100%;">{selected["name"]}</h3>',
                     unsafe_allow_html=True,
                 )
 
@@ -91,7 +88,7 @@ def render():
                     unsafe_allow_html=True,
                 )
 
-                # BARIS KONTEN 1: Gambar & Deskripsi
+                # BARIS 1: Gambar & Deskripsi
                 col_img, col_desc = st.columns([1, 1])
 
                 with col_img:
@@ -115,7 +112,7 @@ def render():
 
                 st.markdown("<div style='height: 12px;'></div>", unsafe_allow_html=True)
 
-                # BARIS KONTEN 2: Rekomendasi Obat & Penanganan Tepat (Rata Atas/Sejajar)
+                # BARIS 2: Rekomendasi Obat & Penanganan Tepat
                 col_obat, col_penanganan = st.columns([1, 1])
 
                 with col_obat:
@@ -138,7 +135,6 @@ def render():
                         unsafe_allow_html=True,
                     )
 
-            # Space Bawah
             st.markdown("<div style='height: 24px;'></div>", unsafe_allow_html=True)
             return
 
