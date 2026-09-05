@@ -66,6 +66,73 @@ def is_valid_skin_image(file_obj):
 
 def render_input():
     """Halaman Deteksi Baru - Input Data"""
+
+    # ------------------------------------------------------------------------
+    # STYLING KUSTOM FILE UPLOADER (Warna Krem & Posisi Center)
+    # ------------------------------------------------------------------------
+    st.markdown(
+        """
+        <style>
+        /* Container luar dropzone upload */
+        [data-testid="stFileUploaderDropzone"] {
+            background-color: #fcf8f5 !important;
+            border: 2px dashed #d6c5b7 !important;
+            border-radius: 16px !important;
+            padding: 18px 12px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            text-align: center !important;
+        }
+
+        /* Merapikan posisi elemen di dalam dropzone agar selalu di tengah */
+        [data-testid="stFileUploaderDropzone"] > div {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 100% !important;
+        }
+
+        /* Ubah Tombol Upload menjadi warna Krem dengan teks Cokelat Jelas */
+        [data-testid="stFileUploaderDropzone"] button {
+            background-color: #e8ded5 !important;
+            color: #4a3525 !important;
+            border: 1px solid #cbb8a9 !important;
+            border-radius: 12px !important;
+            font-weight: 700 !important;
+            font-size: 13px !important;
+            padding: 8px 20px !important;
+            margin: 0 auto 6px auto !important;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.04) !important;
+        }
+
+        /* Efek hover saat kursor di atas tombol */
+        [data-testid="stFileUploaderDropzone"] button:hover {
+            background-color: #f3a88c !important;
+            color: #ffffff !important;
+            border-color: #e09275 !important;
+        }
+
+        /* Memastikan ikon dan tulisan di dalam tombol berwarna cokelat gelap */
+        [data-testid="stFileUploaderDropzone"] button * {
+            color: inherit !important;
+            fill: currentColor !important;
+        }
+
+        /* Warna teks instruksi/ukuran file di bawah tombol */
+        [data-testid="stFileUploaderDropzone"] small,
+        [data-testid="stFileUploaderDropzone"] span,
+        [data-testid="stFileUploaderDropzone"] p {
+            color: #5a483a !important;
+            text-align: center !important;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
     st.markdown(
         '<p class="sekulit-subheading" style="font-weight:700; margin-bottom: 12px;">Input Data Pengguna</p>',
         unsafe_allow_html=True,
