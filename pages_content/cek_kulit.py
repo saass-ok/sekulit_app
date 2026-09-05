@@ -22,79 +22,74 @@ LOKASI_LESI_OPTIONS = {
 
 
 def render_input():
-    """Halaman Deteksi Baru - Input Data dengan teks gelap"""
-    # ===== CSS lokal untuk memaksa semua teks gelap =====
+    """Halaman Deteksi Baru - Input Data dengan pilihan Kamera / Upload File"""
+
+    # ===== CSS Lokal untuk Penguncian Tema Terang pada Widget Input =====
     st.markdown(
         """
         <style>
-        /* Container utama */
-        .cek-kulit-container {
-            color: #000000 !important;
+        /* Paksa background form input agar tidak ikut menghitam di Dark Mode */
+        .stNumberInput div[data-baseweb="input"],
+        .stSelectbox div[data-baseweb="select"] > div {
+            background-color: #FFFFFF !important;
+            border: 1px solid #D0C0B0 !important;
+            border-radius: 12px !important;
+            color: #4A3525 !important;
         }
-        /* Semua label, teks, div di dalam container */
-        .cek-kulit-container label,
-        .cek-kulit-container .stNumberInput label,
-        .cek-kulit-container .stRadio label,
-        .cek-kulit-container .stSelectbox label,
-        .cek-kulit-container .stFileUploader label,
-        .cek-kulit-container .stMarkdown p,
-        .cek-kulit-container .stMarkdown div,
-        .cek-kulit-container span,
-        .cek-kulit-container .stFileUploader div,
-        .cek-kulit-container .stRadio div[role="radiogroup"] label,
-        .cek-kulit-container .stFileUploader span {
-            color: #FFFFFF !important;
+        
+        .stNumberInput input,
+        .stSelectbox div {
+            color: #4A3525 !important;
         }
-        /* Placeholder text */
-        .cek-kulit-container input::placeholder,
-        .cek-kulit-container textarea::placeholder {
-            color: #000000 !important;
-            opacity: 0.7 !important;
-        }
-        /* Teks di file uploader (ukuran file, batas) */
-        .cek-kulit-container .stFileUploader div[data-testid="stFileUploaderDropzone"] p,
-        .cek-kulit-container .stFileUploader div[data-testid="stFileUploaderDropzone"] span,
-        .cek-kulit-container .stFileUploader div[data-testid="stFileUploaderDropzone"] small {
-            color: #000000 !important;
-        }
-        /* Teks di radio button options */
-        .cek-kulit-container .stRadio div[role="radiogroup"] label div p {
-            color: #000000 !important;
-        }
-        /* Selectbox options */
-        .cek-kulit-container .stSelectbox div[data-baseweb="select"] {
-            color: #000000 !important;
-        }
-        /* Number input */
-        .cek-kulit-container .stNumberInput input {
-            color: #000000 !important;
+
+        /* Styling Pilihan Metode Input (Radio Option) */
+        div[role="radiogroup"] label div p {
+            color: #4A3525 !important;
+            font-weight: 600 !important;
         }
         </style>
-        <div class="cek-kulit-container">
         """,
         unsafe_allow_html=True,
     )
 
     st.markdown(
-        '<p class="sekulit-subheading" style="font-weight:700; margin-bottom: 12px; color:#000000;">Input Data Pengguna</p>',
+        '<p class="sekulit-subheading" style="font-weight:700; margin-bottom: 12px; color:#4a3525;">Input Data Pengguna</p>',
         unsafe_allow_html=True,
     )
 
-    # 1. Upload gambar
+    # 1. Pilihan Metode Input Gambar (Upload vs Kamera)
     st.markdown(
-        '<p style="font-size:12px; font-weight:700; color:#000000; margin-bottom:2px; margin-top:10px;">Unggah Foto Lesi Kulit</p>',
+        '<p style="font-size:12px; font-weight:700; color:#4a3525; margin-bottom:4px; margin-top:10px;">Metode Ambil Gambar Lesi Kulit</p>',
         unsafe_allow_html=True,
     )
-    uploaded_file = st.file_uploader(
-        "Unggah Foto Lesi Kulit",
-        type=["jpg", "jpeg", "png"],
-        key="input_foto",
+
+    metode_input = st.radio(
+        "Metode Input Gambar",
+        options=["Unggah File", "Kamera Langsung"],
+        key="input_metode_gambar",
+        horizontal=True,
         label_visibility="collapsed",
     )
 
+    image_source = None
+
+    if metode_input == "Unggah File":
+        image_source = st.file_uploader(
+            "Unggah Foto Lesi Kulit",
+            type=["jpg", "jpeg", "png"],
+            key="input_foto_upload",
+            label_visibility="collapsed",
+        )
+    else:
+        image_source = st.camera_input(
+            "Ambil Foto Lesi Kulit",
+            key="input_foto_kamera",
+            label_visibility="collapsed",
+        )
+
     # 2. Umur
     st.markdown(
-        '<p style="font-size:12px; font-weight:700; color:#000000; margin-bottom:2px; margin-top:10px;">Umur</p>',
+        '<p style="font-size:12px; font-weight:700; color:#4a3525; margin-bottom:2px; margin-top:10px;">Umur</p>',
         unsafe_allow_html=True,
     )
     st.number_input(
@@ -109,7 +104,7 @@ def render_input():
 
     # 3. Jenis Kelamin
     st.markdown(
-        '<p style="font-size:12px; font-weight:700; color:#000000; margin-bottom:2px; margin-top:10px;">Jenis Kelamin</p>',
+        '<p style="font-size:12px; font-weight:700; color:#4a3525; margin-bottom:2px; margin-top:10px;">Jenis Kelamin</p>',
         unsafe_allow_html=True,
     )
     st.radio(
@@ -122,7 +117,7 @@ def render_input():
 
     # 4. Lokasi Lesi
     st.markdown(
-        '<p style="font-size:12px; font-weight:700; color:#000000; margin-bottom:2px; margin-top:10px;">Lokasi Lesi</p>',
+        '<p style="font-size:12px; font-weight:700; color:#4a3525; margin-bottom:2px; margin-top:10px;">Lokasi Lesi</p>',
         unsafe_allow_html=True,
     )
     st.selectbox(
@@ -137,28 +132,33 @@ def render_input():
 
     st.write("")
 
-    # 5. Tombol Proses Estimasi
+    # 5. Tombol Proses Estimasi & Validasi Gambar
     if st.button(
         "Proses Estimasi",
         type="primary",
         key="btn_proses_estimasi",
         use_container_width=True,
     ):
-        if uploaded_file is None:
-            st.toast("Silakan unggah foto lesi kulit terlebih dahulu!", icon="⚠️")
+        # Validasi 1: Gambar Kosong
+        if image_source is None:
+            st.toast("Silakan unggah atau ambil foto lesi kulit terlebih dahulu!", icon="⚠️")
             return
 
         with st.spinner("Menganalisis gambar dan data pasien..."):
             estimation_result = predict_skin_disease(
-                image_file=uploaded_file,
+                image_file=image_source,
                 age=st.session_state.get("input_usia"),
                 gender=st.session_state.get("input_gender"),
                 location=st.session_state.get("input_lokasi_lesi"),
             )
+
+            # Validasi 2: Cek Apakah Gambar Valid (Bukan gambar kulit)
+            if isinstance(estimation_result, dict) and not estimation_result.get("is_valid", True):
+                st.warning("⚠️ **Foto Tidak Valid!** Harap pastikan foto yang dimasukkan adalah gambar area lesi kulit yang jelas dan fokus.")
+                return
+
             st.session_state.estimation_result = estimation_result
             go_to("cek_kulit_output")
-
-    st.markdown("</div>", unsafe_allow_html=True)  # tutup container
 
 
 def render_output():
@@ -174,7 +174,7 @@ def render_output():
     st.markdown(
         f"""
         <div class="sekulit-card" style="text-align: center; padding: 18px 12px; border-radius: 16px;">
-            <h3 style="margin: 0; font-size: 20px; font-weight: 700; color: #000000;">{result["label"]}</h3>
+            <h3 style="margin: 0; font-size: 20px; font-weight: 700; color: #4a3525;">{result["label"]}</h3>
         </div>
         """,
         unsafe_allow_html=True,
@@ -183,7 +183,7 @@ def render_output():
     # Deskripsi Penyakit
     st.markdown(
         f"""
-        <p style="font-size: 11px; color: #000000; line-height: 1.4; text-align: justify; margin: 10px 0 14px 0;">
+        <p style="font-size: 11px; color: #4a3525; line-height: 1.4; text-align: justify; margin: 10px 0 14px 0;">
             {result["description"]}
         </p>
         """,
@@ -192,7 +192,7 @@ def render_output():
 
     # Bar Confidence Score
     st.markdown(
-        '<p style="font-size: 12px; font-weight: 700; color: #000000; margin-bottom: 4px;">Confidence Score</p>',
+        '<p style="font-size: 12px; font-weight: 700; color: #4a3525; margin-bottom: 4px;">Confidence Score</p>',
         unsafe_allow_html=True,
     )
     conf_val = result["confidence"]
@@ -200,7 +200,7 @@ def render_output():
         f"""
         <div style="background-color: #e8ded5; border-radius: 12px; height: 32px; width: 100%; position: relative; overflow: hidden; margin-bottom: 12px;">
             <div style="background-color: #f3a88c; width: {conf_val}%; height: 100%; border-radius: 12px; display: flex; align-items: center; padding-left: 12px;">
-                <span style="font-size: 12px; font-weight: 700; color: #000000;">{conf_val:.2f}%</span>
+                <span style="font-size: 12px; font-weight: 700; color: #4a3525;">{conf_val:.2f}%</span>
             </div>
         </div>
         """,
@@ -209,7 +209,7 @@ def render_output():
 
     # Bar Uncertainty Level
     st.markdown(
-        '<p style="font-size: 12px; font-weight: 700; color: #000000; margin-bottom: 4px;">Uncertainty Level</p>',
+        '<p style="font-size: 12px; font-weight: 700; color: #4a3525; margin-bottom: 4px;">Uncertainty Level</p>',
         unsafe_allow_html=True,
     )
     uncert_val = result["uncertainty"]
@@ -217,7 +217,7 @@ def render_output():
         f"""
         <div style="background-color: #e8ded5; border-radius: 12px; height: 32px; width: 100%; position: relative; overflow: hidden; margin-bottom: 14px;">
             <div style="background-color: #f3a88c; width: {uncert_val}%; height: 100%; border-radius: 12px; display: flex; align-items: center; padding-left: 12px;">
-                <span style="font-size: 12px; font-weight: 700; color: #000000;">{uncert_val:.2f}%</span>
+                <span style="font-size: 12px; font-weight: 700; color: #4a3525;">{uncert_val:.2f}%</span>
             </div>
         </div>
         """,
@@ -226,13 +226,13 @@ def render_output():
 
     # Card Saran
     st.markdown(
-        '<p style="font-size: 12px; font-weight: 700; color: #000000; margin-bottom: 6px;">Saran Berdasarkan Hasil Estimasi</p>',
+        '<p style="font-size: 12px; font-weight: 700; color: #4a3525; margin-bottom: 6px;">Saran Berdasarkan Hasil Estimasi</p>',
         unsafe_allow_html=True,
     )
     st.markdown(
         """
         <div class="sekulit-card" style="padding: 12px; border-radius: 16px; margin-bottom: 12px;">
-            <p style="font-size: 11px; color: #000000; margin: 0; line-height: 1.4;">
+            <p style="font-size: 11px; color: #4a3525; margin: 0; line-height: 1.4;">
                 Hindari memanipulasi atau mengobati sendiri area kulit tersebut, dan konsultasikan ke dokter spesialis kulit guna mendapatkan pemeriksaan yang akurat.
             </p>
         </div>
@@ -245,7 +245,7 @@ def render_output():
         """
         <div style="background-color: #fce8cc; border: 1px solid #f7d098; border-radius: 14px; padding: 10px 12px; display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
             <span style="font-size: 20px;">⚠️</span>
-            <p style="font-size: 10px; color: #000000; margin: 0; line-height: 1.3;">
+            <p style="font-size: 10px; color: #4a3525; margin: 0; line-height: 1.3;">
                 <b>Penting:</b> Hasil ini merupakan estimasi dini berbasis analisis machine learning dan bukan merupakan diagnosis medis mutlak.
             </p>
         </div>
