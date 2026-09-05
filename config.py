@@ -43,13 +43,13 @@ COLOR_BORDER = "#ecdfd4"
 COLOR_MUTED = "#8a7a6d"
 
 # ---------- Navigasi bottom nav ----------
-# key -> (label, material icon, root page yang dituju)
+# key -> (label, icon emoji, root page yang dituju)
 NAV_ITEMS = [
-    ("beranda", "Beranda", ":material/home:"),
-    ("cek_kulit", "Cek Kulit", ":material/search:"),
-    ("konsultasi", "Konsultasi", ":material/chat_bubble:"),
-    ("rekomendasi_obat", "Obat", ":material/local_hospital:"),
-    ("informasi", "Informasi", ":material/info:"),
+    ("beranda", "Beranda", "🏠"),
+    ("cek_kulit", "Cek Kulit", "🔍"),
+    ("konsultasi", "Konsultasi", "💬"),
+    ("rekomendasi_obat", "Obat", "💊"),
+    ("informasi", "Informasi", "ℹ️"),
 ]
 
 # Judul header per halaman (yang punya back navigation)
