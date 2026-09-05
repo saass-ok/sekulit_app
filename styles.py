@@ -201,23 +201,33 @@ def inject_css():
             margin: 0 auto !important;
         }}
 
-        /* 7. FIX TOMBOL CLOSE (X) POP-OUT */
+       /* 7. FIX TOMBOL CLOSE (X) POP-OUT & CONTAINER */
         button[key*="close_detail"] {{
             min-height: 28px !important;
             height: 28px !important;
+            max-height: 28px !important;
             width: 28px !important;
+            max-width: 28px !important;
             padding: 0 !important;
             background-color: #4a3525 !important;
             color: #ffffff !important;
             border-radius: 50% !important;
             font-size: 12px !important;
             font-weight: bold !important;
-            float: right !important;
             border: none !important;
+            margin-left: auto !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
         }}
 
         button[key*="close_detail"] * {{
             color: #ffffff !important;
+        }}
+
+        [data-testid="stElementContainer"]:has(button[key*="close_detail"]) {{
+            display: flex !important;
+            justify-content: flex-end !important;
         }}
 
         /* Hide Scrollbar */
