@@ -1,4 +1,4 @@
-"""Injeksi CSS Global - SEKULIT Mobile Frame (390x844 px)"""
+"""Injeksi CSS Global - SEKULIT Mobile Frame Responsif"""
 
 import config as c
 import streamlit as st
@@ -10,7 +10,7 @@ def inject_css():
         <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
-        /* 1. Mencegah font kustom merusak font Ikon Material bawaan Streamlit */
+        /* 1. RESET & FONT GLOBAL */
         *:not(span[data-testid="stIconMaterial"]):not(i):not(.material-symbols-outlined) {{
             font-family: 'Plus Jakarta Sans', sans-serif !important;
             box-sizing: border-box !important;
@@ -30,35 +30,71 @@ def inject_css():
             background-color: transparent !important;
         }}
 
-        /* Outer Canvas */
+        /* Outer Canvas Background */
         .stApp {{
             background-color: #d6cfc7 !important;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh !important;
         }}
 
-        /* Frame HP Utama (390 x 844 px) – flex column agar bottom nav di bawah */
-        div.block-container {{
-            max-width: {c.FRAME_WIDTH}px !important;
-            width: {c.FRAME_WIDTH}px !important;
-            height: {c.FRAME_HEIGHT}px !important;
-            max-height: {c.FRAME_HEIGHT}px !important;
-            margin: 20px auto !important;
-            padding: 16px 16px 0px 16px !important;
-            background-color: {c.COLOR_BG} !important;
-            border-radius: 32px !important;
-            box-shadow: 0 20px 50px rgba(74, 53, 37, 0.25) !important;
-            overflow-y: auto !important;
-            position: relative !important;
+        /* 2. MENCEGAH KOLOM STACKING/TURUN KE BAWAH DI HP */
+        [data-testid="stHorizontalBlock"] {{
             display: flex !important;
-            flex-direction: column !important;
-            padding-bottom: 80px !important;  /* ruang untuk bottom nav */
+            flex-direction: row !important;
+            flex-wrap: nowrap !important;
+            gap: 6px !important;
         }}
 
+        [data-testid="column"] {{
+            min-width: 0 !important;
+            flex: 1 1 auto !important;
+        }}
+
+        /* 3. TAMPILAN MODE LAPTOP/DESKTOP (> 600px) - Frame HP Melayang */
+        @media (min-width: 600px) {{
+            .stApp {{
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh !important;
+            }}
+
+            div.block-container {{
+                max-width: {c.FRAME_WIDTH}px !important;
+                width: {c.FRAME_WIDTH}px !important;
+                height: {c.FRAME_HEIGHT}px !important;
+                max-height: {c.FRAME_HEIGHT}px !important;
+                margin: auto !important;
+                padding: 16px 16px 80px 16px !important;
+                background-color: {c.COLOR_BG} !important;
+                border-radius: 32px !important;
+                box-shadow: 0 20px 50px rgba(74, 53, 37, 0.25) !important;
+                overflow-y: auto !important;
+                position: relative !important;
+            }}
+        }}
+
+        /* 4. TAMPILAN MODE HP ASLI (< 600px) - Full Screen Native */
+        @media (max-width: 599px) {{
+            .stApp {{
+                background-color: {c.COLOR_BG} !important;
+            }}
+
+            div.block-container {{
+                max-width: 100% !important;
+                width: 100% !important;
+                height: 100vh !important;
+                margin: 0 !important;
+                padding: 12px 12px 80px 12px !important;
+                background-color: {c.COLOR_BG} !important;
+                border-radius: 0px !important;
+                box-shadow: none !important;
+                overflow-y: auto !important;
+            }}
+        }}
+
+        /* Sembunyikan Scrollbar */
         div.block-container::-webkit-scrollbar {{
             width: 0px;
+            display: none;
         }}
 
         /* HEADER JUDUL CENTER & BOLD */
