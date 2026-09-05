@@ -244,6 +244,31 @@ def inject_css():
             color: #ffffff !important;
         }}
 
+        /* 8. KUNCI LIGHT MODE UNTUK SEMUA ELEMENT INPUT */
+        div[data-baseweb="input"],
+        div[data-baseweb="select"] > div,
+        input,
+        select {
+            background-color: #ffffff !important;
+            color: #4a3525 !important;
+            border-radius: 12px !important;
+        }
+        
+        /* Kunci warna teks label & pilihan radio button */
+        div[role="radiogroup"] label p,
+        div[data-testid="stMarkdownContainer"] p,
+        label[data-testid="stWidgetLabel"] p {
+            color: #4a3525 !important;
+        }
+        
+        /* Style khusus untuk Camera Input Streamlit */
+        div[data-testid="stCameraInput"] {
+            background-color: #ffffff !important;
+            border-radius: 16px !important;
+            padding: 10px !important;
+            border: 1px dashed #d0c0b0 !important;
+        }
+
         /* Hide Scrollbar */
         div.block-container::-webkit-scrollbar {{
             width: 0px;
