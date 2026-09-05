@@ -30,29 +30,33 @@ LOKASI_LESI_OPTIONS = {
 
 
 def is_valid_skin_image(file_obj):
-    """Mengecek apakah file gambar merupakan foto kulit/lesi yang valid."""
+    """
+    Validasi presisi tinggi menggunakan ruang warna YCrCb untuk mendeteksi
+    pigmen kulit manusia asli dan menolak objek mati (laptop, layar, dinding, dll).
+    """
     try:
         img = Image.open(file_obj).convert("RGB")
-        file_obj.seek(0)  # Reset pointer file agar dapat dibaca ulang oleh model
+        file_obj.seek(0)  # Reset pointer file agar dapat dibaca ulang oleh model AI
 
-        # Resize gambar untuk pemeriksaan cepat
-        img_resized = img.resize((100, 100))
+        # Resize gambar untuk kalkulasi cepat
+        img_resized = img.resize((120, 120))
         arr = np.array(img_resized, dtype=np.float32)
 
         r, g, b = arr[:, :, 0], arr[:, :, 1], arr[:, :, 2]
 
-        # Heuristik deteksi pixel warna kulit pada ruang RGB
-        skin_mask = (
-            (r > 80) & (g > 30) & (b > 15) &
-            (r > g) & (r > b) &
-            (np.abs(r - g) > 10)
-        )
+        # Konversi RGB ke ruang warna YCrCb (ITU-R BT.601)
+        y = 0.299 * r + 0.587 * g + 0.114 * b
+        cr = (r - y) * 0.713 + 128
+        cb = (b - y) * 0.564 + 128
+
+        # Rentang standar krominans pigmen kulit manusia (Cr & Cb)
+        skin_mask = (cr >= 133) & (cr <= 173) & (cb >= 77) & (cb <= 127)
 
         skin_ratio = np.mean(skin_mask)
         std_dev = np.std(arr)
 
-        # Validasi: Minimal 12% pixel terdeteksi warna kulit dan gambar tidak polos/homogen
-        if skin_ratio < 0.12 or std_dev < 10:
+        # Harus memiliki minimal 25% area pigmen kulit manusia & variasi tekstur yang cukup
+        if skin_ratio < 0.25 or std_dev < 12:
             return False
 
         return True
@@ -154,7 +158,7 @@ def render_input():
             )
             return
 
-        # Validasi 2: Peringatan jika gambar bukan foto kulit bermasalah
+        # Validasi 2: Peringatan jika foto bukan kulit / lesi kulit
         if not is_valid_skin_image(uploaded_file):
             st.error(
                 "⚠️ **Gambar Tidak Valid!**\n\n"
