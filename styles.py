@@ -1,4 +1,4 @@
-"""Injeksi CSS Global - SEKULIT Mobile Frame Responsif"""
+"""Injeksi CSS Global - SEKULIT Mobile Frame Responsif (No Horizontal Scroll)"""
 
 import config as c
 import streamlit as st
@@ -10,10 +10,12 @@ def inject_css():
         <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
-        /* 1. RESET & FONT GLOBAL */
-        *:not(span[data-testid="stIconMaterial"]):not(i):not(.material-symbols-outlined) {{
+        /* 1. RESET GLOBAL & MENCEGAH HORIZONTAL SCROLL */
+        *, html, body, .stApp, [data-testid="stAppViewContainer"] {{
             font-family: 'Plus Jakarta Sans', sans-serif !important;
             box-sizing: border-box !important;
+            max-width: 100vw !important;
+            overflow-x: hidden !important;
         }}
 
         /* Sembunyikan chrome bawaan Streamlit */
@@ -30,25 +32,36 @@ def inject_css():
             background-color: transparent !important;
         }}
 
-        /* Outer Canvas Background */
         .stApp {{
             background-color: #d6cfc7 !important;
         }}
 
-        /* 2. MENCEGAH KOLOM STACKING/TURUN KE BAWAH DI HP */
+        /* 2. PAKSA KOLOM SEJAJAR HORIZONTAL & MENYUSUT SAMA RATA */
         [data-testid="stHorizontalBlock"] {{
             display: flex !important;
             flex-direction: row !important;
             flex-wrap: nowrap !important;
-            gap: 6px !important;
+            width: 100% !important;
+            gap: 4px !important;
         }}
 
         [data-testid="column"] {{
             min-width: 0 !important;
-            flex: 1 1 auto !important;
+            flex: 1 1 0px !important;
+            padding: 0 !important;
         }}
 
-        /* 3. TAMPILAN MODE LAPTOP/DESKTOP (> 600px) - Frame HP Melayang */
+        /* Optimasi tombol di dalam kolom agar tidak meletup melebar */
+        [data-testid="column"] button {{
+            padding: 4px 2px !important;
+            font-size: 11px !important;
+            width: 100% !important;
+            text-overflow: ellipsis !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+        }}
+
+        /* 3. TAMPILAN MODE DESKTOP / LAPTOP (> 600px) - Frame HP Melayang */
         @media (min-width: 600px) {{
             .stApp {{
                 display: flex;
@@ -63,11 +76,12 @@ def inject_css():
                 height: {c.FRAME_HEIGHT}px !important;
                 max-height: {c.FRAME_HEIGHT}px !important;
                 margin: auto !important;
-                padding: 16px 16px 80px 16px !important;
+                padding: 12px 12px 80px 12px !important;
                 background-color: {c.COLOR_BG} !important;
                 border-radius: 32px !important;
                 box-shadow: 0 20px 50px rgba(74, 53, 37, 0.25) !important;
                 overflow-y: auto !important;
+                overflow-x: hidden !important;
                 position: relative !important;
             }}
         }}
@@ -88,6 +102,7 @@ def inject_css():
                 border-radius: 0px !important;
                 box-shadow: none !important;
                 overflow-y: auto !important;
+                overflow-x: hidden !important;
             }}
         }}
 
@@ -99,19 +114,21 @@ def inject_css():
 
         /* HEADER JUDUL CENTER & BOLD */
         .sekulit-header-title {{
-            font-size: 16px !important;
+            font-size: 15px !important;
             font-weight: 700 !important;
             color: #4a3525 !important;
             margin: 0 !important;
             text-align: center !important;
             line-height: 36px !important;
             white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
         }}
 
         button[key*="back_"] {{
             background: transparent !important;
             border: none !important;
-            font-size: 22px !important;
+            font-size: 20px !important;
             font-weight: bold !important;
             color: #4a3525 !important;
             padding: 0 !important;
@@ -127,7 +144,7 @@ def inject_css():
             background-color: #fbebe3 !important;
             border: 2px dashed #f3a88c !important;
             border-radius: 16px !important;
-            padding: 16px 8px !important;
+            padding: 12px 6px !important;
             text-align: center !important;
         }}
 
@@ -136,8 +153,9 @@ def inject_css():
             display: flex !important;
             justify-content: center !important;
             align-items: center !important;
-            gap: 20px !important;
+            gap: 12px !important;
             width: 100% !important;
+            flex-wrap: wrap !important;
         }}
 
         .sekulit-card {{
@@ -146,6 +164,8 @@ def inject_css():
             border-radius: {c.RADIUS_CARD}px;
             padding: {c.CARD_PADDING}px;
             margin-bottom: 12px;
+            width: 100% !important;
+            box-sizing: border-box !important;
         }}
         </style>
         """,
