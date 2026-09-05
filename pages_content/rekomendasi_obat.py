@@ -1,12 +1,11 @@
 import os
 import streamlit as st
 
-# ===================== DATA 7 PENYAKIT =====================
+# ===================== DATA 7 PENYAKIT (TANPA EMOJI) =====================
 DISEASES = [
     {
         "id": "melanocytic_nevi",
         "name": "Melanocytic Nevi",
-        "icon": "🟤",
         "image_url": "assets/Melanocytic Nevi.jpg",
         "description": "Melanocytic Nevi adalah pertumbuhan jinak pada kulit yang terbentuk dari penumpukan sel pigmen (melanosit), atau yang secara umum dikenal masyarakat sebagai tahi lalat biasa.",
         "obat": "Kondisi ini tidak dapat disembuhkan atau dihilangkan menggunakan obat minum maupun salep topikal. Sangat dilarang menggunakan cairan atau krim penghilang tahi lalat yang dijual bebas di pasaran, karena berisiko tinggi memicu luka bakar kimia, infeksi, hingga kerusakan jaringan kulit permanen.",
@@ -15,7 +14,6 @@ DISEASES = [
     {
         "id": "basal_cell_carcinoma",
         "name": "Basal Cell Carcinoma",
-        "icon": "🩹",
         "image_url": "assets/Basal Cell Carcinoma.jpg",
         "description": "Basal Cell Carcinoma (BCC) adalah jenis kanker kulit paling umum yang tumbuh lambat dan jarang menyebar ke bagian tubuh lain. Biasanya muncul sebagai benjolan berkilau atau luka yang tidak sembuh-sembuh.",
         "obat": "Pengobatan BCC umumnya melalui tindakan bedah eksisi, krioterapi, atau terapi topikal seperti imiquimod atau fluorouracil untuk kasus superfisial. Konsultasi dengan dokter spesialis kulit sangat dianjurkan.",
@@ -24,7 +22,6 @@ DISEASES = [
     {
         "id": "melanoma",
         "name": "Melanoma",
-        "icon": "⚫",
         "image_url": "assets/Melanoma.jpg",
         "description": "Melanoma adalah jenis kanker kulit paling serius yang berasal dari sel pigmen (melanosit). Dapat muncul dari tahi lalat yang berubah bentuk, warna, atau ukuran, atau muncul sebagai bintik baru.",
         "obat": "Pengobatan melanoma memerlukan tindakan bedah eksisi luas, imunoterapi, terapi target, atau kemoterapi tergantung stadium. Penanganan harus segera dilakukan oleh ahli onkologi kulit.",
@@ -33,7 +30,6 @@ DISEASES = [
     {
         "id": "actinic_keratoses",
         "name": "Actinic Keratoses",
-        "icon": "🔴",
         "image_url": "assets/Actinic Keratoses.jpg",
         "description": "Actinic Keratoses (AK) adalah bercak bersisik pada kulit akibat paparan sinar matahari jangka panjang. Merupakan lesi pra-kanker yang dapat berkembang menjadi squamous cell carcinoma jika tidak ditangani.",
         "obat": "Pengobatan AK meliputi krioterapi, terapi topikal (5-fluorouracil, imiquimod, atau diclofenac), dan fotodinamik terapi. Konsultasi dokter untuk penanganan terbaik.",
@@ -42,7 +38,6 @@ DISEASES = [
     {
         "id": "benign_keratosis",
         "name": "Benign Keratosis",
-        "icon": "🟡",
         "image_url": "assets/Benign Keratosis-like Lesions.jpg",
         "description": "Benign Keratosis (BKL) adalah pertumbuhan kulit jinak yang umum terjadi seiring bertambahnya usia. Biasanya muncul sebagai bercak cokelat atau hitam dengan permukaan kasar seperti kutil.",
         "obat": "BKL tidak memerlukan pengobatan khusus karena bersifat jinak. Namun jika mengganggu secara estetika atau sering iritasi, dapat dilakukan krioterapi atau eksisi minor oleh dokter.",
@@ -51,7 +46,6 @@ DISEASES = [
     {
         "id": "vascular_lesions",
         "name": "Vascular Lesions",
-        "icon": "🔵",
         "image_url": "assets/Vascular Lesions.jpg",
         "description": "Vascular Lesions (VASC) adalah gangguan pembuluh darah di kulit yang tampak sebagai bercak merah, ungu, atau kemerahan. Contohnya adalah hemangioma, port-wine stain, atau spider angioma. Umumnya bersifat jinak.",
         "obat": "Pengobatan vascular lesions tergantung jenisnya. Laser pulsed dye laser (PDL) adalah terapi utama untuk lesi vaskular. Krim topikal seperti timolol dapat digunakan untuk hemangioma infantile.",
@@ -60,7 +54,6 @@ DISEASES = [
     {
         "id": "dermatofibroma",
         "name": "Dermatofibroma",
-        "icon": "🟠",
         "image_url": "assets/Dermatofibroma.jpg",
         "description": "Dermatofibroma (DF) adalah benjolan jinak di bawah kulit yang keras dan berwarna cokelat. Sering muncul di tungkai bawah dan biasanya tidak menimbulkan gejala, meskipun kadang terasa gatal atau nyeri.",
         "obat": "DF tidak memerlukan pengobatan karena bersifat jinak. Jika menimbulkan gejala atau mengganggu, dapat dilakukan eksisi bedah minor oleh dokter kulit.",
@@ -70,19 +63,22 @@ DISEASES = [
 
 
 def render():
-    """Halaman rekomendasi obat – detail kartu rapi & font proporsional."""
+    """Halaman rekomendasi obat – detail kartu rapi, presisi & proporsional."""
 
     selected_id = st.session_state.get("selected_disease")
     if selected_id:
         selected = next((d for d in DISEASES if d["id"] == selected_id), None)
         if selected:
-            # Gunakan container bawaan Streamlit agar semua elemen terkurung rapi
+            # Space atas agar tidak mepet ke header
+            st.markdown("<div style='height: 8px;'></div>", unsafe_allow_html=True)
+
             with st.container(border=True):
-                # === HEADER KARTU: Judul & Tombol Close (✕) di Ujung Kanan ===
-                col_title, col_close = st.columns([8, 1])
+                # 1 & 2. HEADER: Judul di Tengah (Center), Tombol X Presisi di Pojok Kanan
+                col_spacer, col_title, col_close = st.columns([1, 8, 1])
+                
                 with col_title:
                     st.markdown(
-                        f'<h3 style="color:#4a3525; margin:0; font-size:18px; font-weight:700;">{selected["name"]}</h3>',
+                        f'<h3 style="color:#4a3525; margin:0; font-size:16px; font-weight:700; text-align:center; line-height:28px;">{selected["name"]}</h3>',
                         unsafe_allow_html=True,
                     )
                 with col_close:
@@ -95,7 +91,7 @@ def render():
                     unsafe_allow_html=True,
                 )
 
-                # === BARIS ATAS: Gambar (Kiri) & Deskripsi (Kanan) ===
+                # BARIS 1: Gambar (Kiri) & Deskripsi (Kanan)
                 col_img, col_desc = st.columns([1, 1])
 
                 with col_img:
@@ -103,54 +99,50 @@ def render():
                         st.image(selected["image_url"], use_container_width=True)
                     else:
                         st.markdown(
-                            f'<div style="font-size:60px; text-align:center;">{selected["icon"]}</div>',
+                            '<div style="text-align:center; color:#8a7a6d; padding:20px 0;">[ Gambar ]</div>',
                             unsafe_allow_html=True,
                         )
 
                 with col_desc:
                     st.markdown(
-                        """
-                        <h4 style="color:#4a3525; margin:0 0 6px 0; font-size:14px; font-weight:700;">📋 Deskripsi</h4>
-                        """,
+                        '<h4 style="color:#4a3525; margin:0 0 4px 0; font-size:13px; font-weight:700;">Deskripsi</h4>',
                         unsafe_allow_html=True,
                     )
                     st.markdown(
-                        f'<p style="color:#4a3525; opacity:0.95; margin:0; font-size:12.5px; line-height:1.4;">{selected["description"]}</p>',
+                        f'<p style="color:#4a3525; opacity:0.9; margin:0; font-size:11.5px; line-height:1.35;">{selected["description"]}</p>',
                         unsafe_allow_html=True,
                     )
 
-                st.markdown("<div style='height: 14px;'></div>", unsafe_allow_html=True)
+                st.markdown("<div style='height: 12px;'></div>", unsafe_allow_html=True)
 
-                # === BARIS BAWAH: Rekomendasi Obat (Kiri) & Penanganan Tepat (Kanan) ===
+                # BARIS 2: Rekomendasi Obat & Penanganan Tepat (Dibuat Sejajar Menggunakan Top Alignment)
                 col_obat, col_penanganan = st.columns([1, 1])
 
                 with col_obat:
                     st.markdown(
-                        """
-                        <h4 style="color:#4a3525; margin:0 0 6px 0; font-size:14px; font-weight:700;">💊 Rekomendasi Obat</h4>
-                        """,
+                        '<h4 style="color:#4a3525; margin:0 0 4px 0; font-size:13px; font-weight:700;">Rekomendasi Obat</h4>',
                         unsafe_allow_html=True,
                     )
                     st.markdown(
-                        f'<p style="color:#4a3525; opacity:0.95; margin:0; font-size:12.5px; line-height:1.4;">{selected["obat"]}</p>',
+                        f'<p style="color:#4a3525; opacity:0.9; margin:0; font-size:11.5px; line-height:1.35;">{selected["obat"]}</p>',
                         unsafe_allow_html=True,
                     )
 
                 with col_penanganan:
                     st.markdown(
-                        """
-                        <h4 style="color:#4a3525; margin:0 0 6px 0; font-size:14px; font-weight:700;">🏥 Penanganan Tepat</h4>
-                        """,
+                        '<h4 style="color:#4a3525; margin:0 0 4px 0; font-size:13px; font-weight:700;">Penanganan Tepat</h4>',
                         unsafe_allow_html=True,
                     )
                     st.markdown(
-                        f'<p style="color:#4a3525; opacity:0.95; margin:0; font-size:12.5px; line-height:1.4;">{selected["penanganan"]}</p>',
+                        f'<p style="color:#4a3525; opacity:0.9; margin:0; font-size:11.5px; line-height:1.35;">{selected["penanganan"]}</p>',
                         unsafe_allow_html=True,
                     )
 
+            # Space bawah agar tidak menabrak tombol navigasi
+            st.markdown("<div style='height: 30px;'></div>", unsafe_allow_html=True)
             return
 
-    # ---- Grid 2 kolom utama ----
+    # ---- Grid 2 Kolom Utama (Katalog) ----
     st.markdown(
         "<p style='text-align:center; color:#8a7a6d; margin-bottom:16px;'>Pilih penyakit untuk melihat rekomendasi</p>",
         unsafe_allow_html=True,
@@ -164,12 +156,12 @@ def render():
                 st.image(disease["image_url"], use_container_width=True)
             else:
                 st.markdown(
-                    f'<div style="font-size:60px; text-align:center;">{disease["icon"]}</div>',
+                    '<div style="text-align:center; color:#8a7a6d; padding:20px 0;">[ Gambar ]</div>',
                     unsafe_allow_html=True,
                 )
 
             st.markdown(
-                f"<p style='color:#4a3525; font-weight:600; text-align:center; margin:4px 0 8px 0;'>{disease['name']}</p>",
+                f"<p style='color:#4a3525; font-weight:600; text-align:center; margin:4px 0 8px 0; font-size:13px;'>{disease['name']}</p>",
                 unsafe_allow_html=True,
             )
 
