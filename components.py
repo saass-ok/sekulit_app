@@ -6,11 +6,12 @@ from state import go_back, go_to_tab_root
 
 
 def render_header(page_key: str):
-    """Header back navigation."""
+    """Header back navigation: teks bold, center, single line."""
     if page_key == "beranda":
         return
 
     title = c.PAGE_TITLES.get(page_key, "")
+
     col_back, col_title, col_spacer = st.columns([1, 6, 1])
 
     with col_back:
@@ -19,7 +20,7 @@ def render_header(page_key: str):
 
     with col_title:
         st.markdown(
-            f'<p class="sekulit-header-title">{title}</p>',
+            f'<div class="sekulit-header-title">{title}</div>',
             unsafe_allow_html=True,
         )
 
@@ -28,7 +29,7 @@ def render_header(page_key: str):
 
 
 def render_bottom_nav(active_tab: str):
-    """5 tombol navigasi utama di bagian bawah (Khusus Emoji)."""
+    """5 tombol navigasi ikon saja (Material Icons)."""
     cols = st.columns(len(c.NAV_ITEMS))
 
     for col, (tab_key, label, icon) in zip(cols, c.NAV_ITEMS):
@@ -36,9 +37,10 @@ def render_bottom_nav(active_tab: str):
             is_active = tab_key == active_tab
             btn_type = "primary" if is_active else "secondary"
 
-            # Tampilkan emoji ikon saja
+            # Menggunakan parameter icon bawaan Streamlit dengan label kosong ""
             if st.button(
-                icon,
+                "",
+                icon=icon,
                 key=f"nav_{tab_key}",
                 use_container_width=True,
                 type=btn_type,
