@@ -1,4 +1,4 @@
-"""Injeksi CSS Global - SEKULIT Responsive Header Title Fix"""
+"""Injeksi CSS Global - SEKULIT Responsive Header Title & Popup Fix"""
 
 import config as c
 import streamlit as st
@@ -144,7 +144,7 @@ def inject_css():
 
         /* 4. FIX HEADER TITLE (Anti Terpotong) */
         .sekulit-header-title {{
-            font-size: clamp(12px, 3.8vw, 14.5px) !important; /* Otomatis mengecil jika layar HP sangat sempit */
+            font-size: clamp(12px, 3.8vw, 14.5px) !important;
             font-weight: 700 !important;
             color: #4a3525 !important;
             text-align: center !important;
@@ -201,8 +201,8 @@ def inject_css():
             margin: 0 auto !important;
         }}
 
-        /* Fix Tombol Close (X) Pop-out */
-        button[key="btn_close_detail"] {
+        /* 7. FIX TOMBOL CLOSE (X) POP-OUT */
+        button[key*="close_detail"] {{
             min-height: 28px !important;
             height: 28px !important;
             width: 28px !important;
@@ -214,11 +214,11 @@ def inject_css():
             font-weight: bold !important;
             float: right !important;
             border: none !important;
-        }
+        }}
 
-        button[key="btn_close_detail"] * {
+        button[key*="close_detail"] * {{
             color: #ffffff !important;
-        }
+        }}
 
         /* Hide Scrollbar */
         div.block-container::-webkit-scrollbar {{
