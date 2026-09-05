@@ -1,4 +1,4 @@
-"""Injeksi CSS Global - SEKULIT Mobile Layout & Sticky Nav"""
+"""Injeksi CSS Global - SEKULIT Precision Mobile Styling & Material Icons Fix"""
 
 import config as c
 import streamlit as st
@@ -9,19 +9,35 @@ def inject_css():
         f"""
         <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0');
 
-        /* 1. RESET GLOBAL & MENCEGAH SCROLL SAMPING */
+        /* 1. RESET GLOBAL & SCROLL LOCK */
         *, html, body, .stApp {{
-            font-family: 'Plus Jakarta Sans', sans-serif !important;
             box-sizing: border-box !important;
         }}
 
-        html, body, .stApp, [data-testid="stAppViewContainer"] {{
+        html, body, .stApp {{
+            font-family: 'Plus Jakarta Sans', sans-serif;
             max-width: 100vw !important;
             overflow-x: hidden !important;
         }}
 
-        /* Sembunyikan header/footer bawaan Streamlit */
+        /* FIX PENTING: Kembalikan Font Khusus Ikon Material Streamlit */
+        [data-testid="stIconMaterial"],
+        span[data-testid="stIconMaterial"],
+        .material-symbols-outlined {{
+            font-family: 'Material Symbols Outlined' !important;
+            font-weight: normal !important;
+            font-style: normal !important;
+            line-height: 1 !important;
+            text-transform: none !important;
+            letter-spacing: normal !important;
+            word-wrap: normal !important;
+            white-space: nowrap !important;
+            direction: ltr !important;
+        }}
+
+        /* Sembunyikan chrome bawaan Streamlit */
         #MainMenu, footer, header, div[data-testid="stToolbar"], div[data-testid="stDecoration"] {{
             display: none !important;
             visibility: hidden !important;
@@ -45,7 +61,7 @@ def inject_css():
             flex-direction: row !important;
             flex-wrap: nowrap !important;
             width: 100% !important;
-            gap: 8px !important;
+            gap: 6px !important;
             align-items: center !important;
         }}
 
@@ -57,7 +73,7 @@ def inject_css():
             padding: 0 !important;
         }}
 
-        /* 3. LAYOUT CONTAINER UTAMA (Margin bottom disiapkan untuk Sticky Nav) */
+        /* 3. LAYOUT CONTAINER UTAMA */
         @media (min-width: 600px) {{
             .stApp {{
                 display: flex;
@@ -72,7 +88,7 @@ def inject_css():
                 height: {c.FRAME_HEIGHT}px !important;
                 max-height: {c.FRAME_HEIGHT}px !important;
                 margin: auto !important;
-                padding: 16px 14px 75px 14px !important; /* Padding bawah agar konten tidak tertutup nav */
+                padding: 16px 14px 75px 14px !important;
                 background-color: {c.COLOR_BG} !important;
                 border-radius: 32px !important;
                 box-shadow: 0 20px 50px rgba(74, 53, 37, 0.25) !important;
@@ -81,7 +97,6 @@ def inject_css():
                 position: relative !important;
             }}
 
-            /* Sticky Nav di Mode Desktop Simulator */
             div[data-testid="stHorizontalBlock"]:has(button[key*="nav_"]) {{
                 position: absolute !important;
                 bottom: 0 !important;
@@ -114,7 +129,6 @@ def inject_css():
                 overflow-x: hidden !important;
             }}
 
-            /* Sticky Nav Layaknya Aplikasi Mobile (Instagram Style) */
             div[data-testid="stHorizontalBlock"]:has(button[key*="nav_"]) {{
                 position: fixed !important;
                 bottom: 0 !important;
@@ -128,7 +142,7 @@ def inject_css():
             }}
         }}
 
-        /* 4. FIX HEADER (Bold, Center, Presisi) */
+        /* 4. HEADER TITLE */
         .sekulit-header-title {{
             font-size: 15px !important;
             font-weight: 700 !important;
@@ -139,10 +153,28 @@ def inject_css():
             text-overflow: ellipsis !important;
             line-height: 32px !important;
             margin: 0 !important;
-            padding: 0 !important;
         }}
 
-        /* 5. FIX UPLOAD BUTTON GLITCH */
+        /* 5. STYLE TOMBOL NAVIGASI BAWAH */
+        button[key*="nav_"] {{
+            min-height: 42px !important;
+            height: 42px !important;
+            max-height: 42px !important;
+            padding: 0 !important;
+            border-radius: 12px !important;
+            margin: 0 !important;
+            width: 100% !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+        }}
+
+        button[key*="nav_"] [data-testid="stIconMaterial"] {{
+            font-size: 24px !important;
+            margin: 0 !important;
+        }}
+
+        /* 6. FILE UPLOADER FIX */
         [data-testid="stFileUploader"] {{
             background-color: #ffffff !important;
             border-radius: 16px !important;
@@ -167,32 +199,6 @@ def inject_css():
             color: #ffffff !important;
             border: none !important;
             margin: 0 auto !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-        }}
-
-        [data-testid="stFileUploader"] button * {{
-            color: #ffffff !important;
-        }}
-
-        /* 6. STYLE TOMBOL BOTTOM NAV & IKON */
-        button[key*="nav_"] {{
-            min-height: 42px !important;
-            height: 42px !important;
-            max-height: 42px !important;
-            padding: 0 !important;
-            border-radius: 12px !important;
-            margin: 0 !important;
-            width: 100% !important;
-            display: flex !important;
-            justify-content: center !important;
-            align-items: center !important;
-        }}
-
-        button[key*="nav_"] [data-testid="stIconMaterial"] {{
-            font-size: 22px !important;
-            margin: 0 !important;
         }}
 
         /* Hide Scrollbar */
