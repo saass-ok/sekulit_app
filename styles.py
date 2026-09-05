@@ -201,6 +201,25 @@ def inject_css():
             margin: 0 auto !important;
         }}
 
+        /* Fix Tombol Close (X) Pop-out */
+        button[key="btn_close_detail"] {
+            min-height: 28px !important;
+            height: 28px !important;
+            width: 28px !important;
+            padding: 0 !important;
+            background-color: #4a3525 !important;
+            color: #ffffff !important;
+            border-radius: 50% !important;
+            font-size: 12px !important;
+            font-weight: bold !important;
+            float: right !important;
+            border: none !important;
+        }
+
+        button[key="btn_close_detail"] * {
+            color: #ffffff !important;
+        }
+
         /* Hide Scrollbar */
         div.block-container::-webkit-scrollbar {{
             width: 0px;
