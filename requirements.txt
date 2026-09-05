@@ -1,6 +1,7 @@
 streamlit>=1.36
 tensorflow==2.21.0
 keras==3.15.1
+scikit-learn==1.7.1
 h5py
 pillow
 numpy
