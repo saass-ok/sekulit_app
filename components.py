@@ -6,12 +6,11 @@ from state import go_back, go_to_tab_root
 
 
 def render_header(page_key: str):
-    """Header back navigation: teks bold, center, single line."""
+    """Header back navigation."""
     if page_key == "beranda":
         return
 
     title = c.PAGE_TITLES.get(page_key, "")
-
     col_back, col_title, col_spacer = st.columns([1, 6, 1])
 
     with col_back:
@@ -29,7 +28,7 @@ def render_header(page_key: str):
 
 
 def render_bottom_nav(active_tab: str):
-    """5 tombol navigasi ikon saja (Material Icons)."""
+    """5 tombol navigasi utama di bagian bawah (Khusus Material Icons)."""
     cols = st.columns(len(c.NAV_ITEMS))
 
     for col, (tab_key, label, icon) in zip(cols, c.NAV_ITEMS):
@@ -37,7 +36,7 @@ def render_bottom_nav(active_tab: str):
             is_active = tab_key == active_tab
             btn_type = "primary" if is_active else "secondary"
 
-            # Menggunakan parameter icon bawaan Streamlit dengan label kosong ""
+            # Menggunakan icon bawaan Streamlit
             if st.button(
                 "",
                 icon=icon,
