@@ -175,31 +175,47 @@ def inject_css():
         }}
 
         /* 6. FILE UPLOADER FIX */
-        [data-testid="stFileUploader"] {{
+        [data-testid="stFileUploader"] {
             background-color: #ffffff !important;
             border-radius: 16px !important;
             padding: 8px !important;
             border: 1px dashed #d0c0b0 !important;
-        }}
+        }
 
-        [data-testid="stFileUploaderDropzone"] {{
-            background-color: transparent !important;
+        [data-testid="stFileUploaderDropzone"] {
+            background-color: #ffffff !important;
             padding: 12px !important;
-        }}
+            border: none !important;
+        }
 
-        [data-testid="stFileUploader"] button {{
+        /* Warna teks petunjuk upload (Drag and drop, limit ukuran, dll) */
+        [data-testid="stFileUploaderDropzone"] span,
+        [data-testid="stFileUploaderDropzone"] div,
+        [data-testid="stFileUploaderDropzone"] small,
+        [data-testid="stFileUploaderInstructions"],
+        [data-testid="stFileUploaderFileData"] {
+            color: #4a3525 !important;
+            font-weight: 500 !important;
+        }
+
+        /* Tombol Browse Files */
+        [data-testid="stFileUploader"] button {
             width: auto !important;
-            min-height: 36px !important;
-            height: 36px !important;
-            padding: 4px 16px !important;
+            min-height: 38px !important;
+            height: 38px !important;
+            padding: 6px 18px !important;
             font-size: 13px !important;
             font-weight: 600 !important;
-            border-radius: 8px !important;
+            border-radius: 10px !important;
             background-color: #4a3525 !important;
             color: #ffffff !important;
             border: none !important;
             margin: 0 auto !important;
-        }}
+        }
+
+        [data-testid="stFileUploader"] button * {
+            color: #ffffff !important;
+        }
 
         /* 7. PAKSA KOTAK JADI RELATIVE & TOMBOL X DIPOSISIKAN ABSOLUT KE POJOK KANAN ATAS */
         [data-testid="stVerticalBlockBorderWrapper"] {{
