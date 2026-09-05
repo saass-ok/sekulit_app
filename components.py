@@ -4,8 +4,6 @@ import config as c
 import streamlit as st
 from state import go_back, go_to_tab_root
 
-ICON_ONLY = True
-
 
 def render_header(page_key: str):
     """Header back navigation: posisi tengah presisi & teks bold."""
@@ -31,14 +29,14 @@ def render_header(page_key: str):
 
 
 def render_bottom_nav(active_tab: str):
-    """5 tombol navigasi utama di bagian bawah."""
+    """5 tombol navigasi utama di bagian bawah (KHUSUS IKON TANPA TEKS)."""
     cols = st.columns(len(c.NAV_ITEMS))
 
     for col, (tab_key, label, icon) in zip(cols, c.NAV_ITEMS):
         with col:
             is_active = tab_key == active_tab
 
-            # Format otomatis string nama ikon menjadi sintaks Material Icon Streamlit
+            # Format otomatis material icon
             formatted_icon = icon
             if (
                 icon
@@ -47,20 +45,18 @@ def render_bottom_nav(active_tab: str):
             ):
                 formatted_icon = f":material/{icon}:"
 
-            display_label = label if not ICON_ONLY else ""
-
             btn_kwargs = {
                 "key": f"nav_{tab_key}",
                 "use_container_width": True,
                 "type": "primary" if is_active else "secondary",
             }
 
+            # Menggunakan ikon saja, label diset string kosong ""
             if formatted_icon.startswith(":material/"):
                 btn_kwargs["icon"] = formatted_icon
-            elif ICON_ONLY:
-                display_label = formatted_icon
+                display_label = ""
             else:
-                display_label = f"{formatted_icon}\n{label}"
+                display_label = formatted_icon
 
             if st.button(display_label, **btn_kwargs):
                 if not is_active:
