@@ -70,101 +70,87 @@ DISEASES = [
 
 
 def render():
-    """Halaman rekomendasi obat – grid gambar tanpa bubble, detail lebih rapi."""
+    """Halaman rekomendasi obat – detail kartu rapi & font proporsional."""
 
-    # ---- Jika ada penyakit yang dipilih, tampilkan detail ----
     selected_id = st.session_state.get("selected_disease")
     if selected_id:
         selected = next((d for d in DISEASES if d["id"] == selected_id), None)
         if selected:
-            # Container Kartu
-            st.markdown(
-                """
-                <div style="
-                    background: #ffffff;
-                    border-radius: 16px;
-                    padding: 16px;
-                    border: 1px solid rgba(250,213,197,0.6);
-                    margin-bottom: 12px;
-                ">
-                """,
-                unsafe_allow_html=True,
-            )
+            # Gunakan container bawaan Streamlit agar semua elemen terkurung rapi
+            with st.container(border=True):
+                # === HEADER KARTU: Judul & Tombol Close (✕) di Ujung Kanan ===
+                col_title, col_close = st.columns([8, 1])
+                with col_title:
+                    st.markdown(
+                        f'<h3 style="color:#4a3525; margin:0; font-size:18px; font-weight:700;">{selected["name"]}</h3>',
+                        unsafe_allow_html=True,
+                    )
+                with col_close:
+                    if st.button("✕", key="close_detail", help="Tutup detail"):
+                        st.session_state.selected_disease = None
+                        st.rerun()
 
-            # === HEADER KARTU: Judul & Tombol Close (✕) di Pojok Kanan ===
-            col_title, col_close = st.columns([7, 1])
-            with col_title:
                 st.markdown(
-                    f'<h3 style="color:#4a3525; margin:0; font-size:18px;">{selected["name"]}</h3>',
+                    "<hr style='margin: 10px 0 14px 0; border: none; border-top: 1px solid #ecdfd4;'>",
                     unsafe_allow_html=True,
                 )
-            with col_close:
-                if st.button("✕", key="close_detail", help="Tutup detail"):
-                    st.session_state.selected_disease = None
-                    st.rerun()
 
-            st.markdown(
-                "<hr style='margin: 8px 0 12px 0; border: none; border-top: 1px solid #ecdfd4;'>",
-                unsafe_allow_html=True,
-            )
+                # === BARIS ATAS: Gambar (Kiri) & Deskripsi (Kanan) ===
+                col_img, col_desc = st.columns([1, 1])
 
-            # === BARIS ATAS: Gambar (Kiri) & Deskripsi (Kanan) ===
-            col_img, col_desc = st.columns([1, 1])
+                with col_img:
+                    if os.path.exists(selected["image_url"]):
+                        st.image(selected["image_url"], use_container_width=True)
+                    else:
+                        st.markdown(
+                            f'<div style="font-size:60px; text-align:center;">{selected["icon"]}</div>',
+                            unsafe_allow_html=True,
+                        )
 
-            with col_img:
-                if os.path.exists(selected["image_url"]):
-                    st.image(selected["image_url"], use_container_width=True)
-                else:
+                with col_desc:
                     st.markdown(
-                        f'<div style="font-size:60px; text-align:center;">{selected["icon"]}</div>',
+                        """
+                        <h4 style="color:#4a3525; margin:0 0 6px 0; font-size:14px; font-weight:700;">📋 Deskripsi</h4>
+                        """,
+                        unsafe_allow_html=True,
+                    )
+                    st.markdown(
+                        f'<p style="color:#4a3525; opacity:0.95; margin:0; font-size:12.5px; line-height:1.4;">{selected["description"]}</p>',
                         unsafe_allow_html=True,
                     )
 
-            with col_desc:
-                st.markdown(
-                    """
-                    <h4 style="color:#4a3525; margin:0 0 4px 0; font-size:13px;">📋 Deskripsi</h4>
-                    """,
-                    unsafe_allow_html=True,
-                )
-                st.markdown(
-                    f'<p style="color:#4a3525; opacity:0.9; margin:0; font-size:11px; line-height:1.3;">{selected["description"]}</p>',
-                    unsafe_allow_html=True,
-                )
+                st.markdown("<div style='height: 14px;'></div>", unsafe_allow_html=True)
 
-            st.markdown("<div style='height: 12px;'></div>", unsafe_allow_html=True)
+                # === BARIS BAWAH: Rekomendasi Obat (Kiri) & Penanganan Tepat (Kanan) ===
+                col_obat, col_penanganan = st.columns([1, 1])
 
-            # === BARIS BAWAH: Rekomendasi Obat (Kiri) & Penanganan Tepat (Kanan) ===
-            col_obat, col_penanganan = st.columns([1, 1])
+                with col_obat:
+                    st.markdown(
+                        """
+                        <h4 style="color:#4a3525; margin:0 0 6px 0; font-size:14px; font-weight:700;">💊 Rekomendasi Obat</h4>
+                        """,
+                        unsafe_allow_html=True,
+                    )
+                    st.markdown(
+                        f'<p style="color:#4a3525; opacity:0.95; margin:0; font-size:12.5px; line-height:1.4;">{selected["obat"]}</p>',
+                        unsafe_allow_html=True,
+                    )
 
-            with col_obat:
-                st.markdown(
-                    """
-                    <h4 style="color:#4a3525; margin:0 0 4px 0; font-size:13px;">💊 Rekomendasi Obat</h4>
-                    """,
-                    unsafe_allow_html=True,
-                )
-                st.markdown(
-                    f'<p style="color:#4a3525; opacity:0.9; margin:0; font-size:11px; line-height:1.3;">{selected["obat"]}</p>',
-                    unsafe_allow_html=True,
-                )
+                with col_penanganan:
+                    st.markdown(
+                        """
+                        <h4 style="color:#4a3525; margin:0 0 6px 0; font-size:14px; font-weight:700;">🏥 Penanganan Tepat</h4>
+                        """,
+                        unsafe_allow_html=True,
+                    )
+                    st.markdown(
+                        f'<p style="color:#4a3525; opacity:0.95; margin:0; font-size:12.5px; line-height:1.4;">{selected["penanganan"]}</p>',
+                        unsafe_allow_html=True,
+                    )
 
-            with col_penanganan:
-                st.markdown(
-                    """
-                    <h4 style="color:#4a3525; margin:0 0 4px 0; font-size:13px;">🏥 Penanganan Tepat</h4>
-                    """,
-                    unsafe_allow_html=True,
-                )
-                st.markdown(
-                    f'<p style="color:#4a3525; opacity:0.9; margin:0; font-size:11px; line-height:1.3;">{selected["penanganan"]}</p>',
-                    unsafe_allow_html=True,
-                )
-
-            st.markdown("</div>", unsafe_allow_html=True)
             return
 
-    # ---- Grid 2 kolom tanpa bubble ----
+    # ---- Grid 2 kolom utama ----
     st.markdown(
         "<p style='text-align:center; color:#8a7a6d; margin-bottom:16px;'>Pilih penyakit untuk melihat rekomendasi</p>",
         unsafe_allow_html=True,
@@ -174,7 +160,6 @@ def render():
     for idx, disease in enumerate(DISEASES):
         col = cols[idx % 2]
         with col:
-            # Gambar
             if os.path.exists(disease["image_url"]):
                 st.image(disease["image_url"], use_container_width=True)
             else:
@@ -183,13 +168,11 @@ def render():
                     unsafe_allow_html=True,
                 )
 
-            # Nama penyakit
             st.markdown(
                 f"<p style='color:#4a3525; font-weight:600; text-align:center; margin:4px 0 8px 0;'>{disease['name']}</p>",
                 unsafe_allow_html=True,
             )
 
-            # Tombol Pilih
             if st.button(
                 "Pilih",
                 key=f"btn_{disease['id']}",
@@ -199,7 +182,4 @@ def render():
                 st.session_state.selected_disease = disease["id"]
                 st.rerun()
 
-            st.markdown(
-                "<div style='margin-bottom:16px;'></div>",
-                unsafe_allow_html=True,
-            )
+            st.markdown("<div style='margin-bottom:16px;'></div>", unsafe_allow_html=True)
